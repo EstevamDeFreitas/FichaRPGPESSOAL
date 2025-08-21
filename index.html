@@ -100,10 +100,14 @@
             <label for="personalidade" class="block font-semibold mb-1">Personalidade</label>
             <textarea id="personalidade" name="personalidade" rows="2" class="w-full p-2 text-sm"></textarea>
           </div>
-          <div>
-            <label for="historia" class="block font-semibold mb-1">História</label>
-            <textarea id="historia" name="historia" rows="4" class="w-full p-2 text-sm"></textarea>
-          </div>
+            <div class="mb-4">
+              <label for="historia" class="block font-semibold mb-1">História</label>
+              <textarea id="historia" name="historia" rows="4" class="w-full p-2 text-sm"></textarea>
+            </div>
+            <div>
+              <label for="observacoes" class="block font-semibold mb-1">Observações</label>
+              <textarea id="observacoes" name="observacoes" rows="2" class="w-full p-2 text-sm"></textarea>
+            </div>
         </div>
     <!-- Perícias -->
     <div class="mt-8 flex gap-4">
@@ -252,7 +256,8 @@
       pericias.forEach(categoria => {
         // Calcular quantidade de dados em efeito para a categoria
         let temIntermediario = false;
-        let temIniciante = false;
+        let contadorPericiasTreinadas = 0;
+        let todasPericiasTreinadas = true; // Para verificar se todas as perícias estão treinadas (pelo menos nível 1)
         
         categoria.habilidades.forEach(hab => {
           // Verifica se há perícias treinadas (nível 1) ou avançadas (nível 2 ou 3)
@@ -265,13 +270,37 @@
           }
           
           if (nivelHab >= 2) temIntermediario = true;
-          else if (nivelHab === 1) temIniciante = true;
+          if (nivelHab >= 1) contadorPericiasTreinadas++;
+          else todasPericiasTreinadas = false; // Se alguma perícia não estiver treinada, marca como falso
         });
         
         let dadosTexto = '';
-        if (temIntermediario) dadosTexto = '2d10 (melhor)';
-        else if (temIniciante) dadosTexto = '1d10';
-        else dadosTexto = '2d10 (pior)';
+        let temDadoBonus = todasPericiasTreinadas && categoria.habilidades.length >= 4;
+        // Exibição simplificada: mostra 3d10 se houver bônus de dado
+        if (temDadoBonus) {
+          // Se for 2d10 (melhor) +1, mostra 3d10 (melhor)
+          if (temIntermediario && contadorPericiasTreinadas >= 2) {
+            dadosTexto = '3d10 (melhor)';
+          }
+          // Se for 1d10 +1, mostra 2d10
+          else if (temIntermediario || contadorPericiasTreinadas >= 2) {
+            dadosTexto = '2d10';
+          }
+          // Se for 2d10 (pior) +1, mostra 3d10 (pior)
+          else {
+            dadosTexto = '3d10 (pior)';
+          }
+        } else {
+          if (temIntermediario && contadorPericiasTreinadas >= 2) {
+            dadosTexto = '2d10 (melhor)';
+          } else if (temIntermediario) {
+            dadosTexto = '1d10';
+          } else if (contadorPericiasTreinadas >= 2) {
+            dadosTexto = '1d10';
+          } else {
+            dadosTexto = '2d10 (pior)';
+          }
+        }
 
         const bloco = document.createElement('div');
         bloco.innerHTML = `<h3 class=\"font-bold text-lg mb-2 flex items-center gap-2\">${categoria.icon} ${categoria.nome} <span class='text-xs font-normal bg-blue-100 text-blue-700 px-2 py-0.5 rounded'>${dadosTexto}</span></h3>`;
@@ -327,7 +356,14 @@
             const checkboxLabel = document.createElement('label');
             checkboxLabel.htmlFor = checkboxId;
             checkboxLabel.className = 'sr-only'; // Screen reader only
-            checkboxLabel.textContent = `Nível ${i} para ${nome}`;
+            
+            // Adiciona descrição do nível nos labels para acessibilidade
+            let nivelDesc = '';
+            if (i === 1) nivelDesc = "Treinado";
+            else if (i === 2) nivelDesc = "Intermediário";
+            else nivelDesc = "Mestre";
+            checkboxLabel.textContent = `${nivelDesc} (Nível ${i}) para ${nome}`;
+            
             linhaSuperior.appendChild(checkboxLabel);
           }
 
@@ -342,7 +378,7 @@
 
             // Label e textarea para múltiplas habilidades
             const habilidadesLabel = document.createElement('label');
-            habilidadesLabel.textContent = 'Habilidades:';
+            habilidadesLabel.textContent = '';
             habilidadesLabel.className = 'block text-sm font-medium mb-1';
             const textareaId = `habilidades-${nome.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
             habilidadesLabel.setAttribute('for', textareaId);
@@ -476,8 +512,9 @@
         genero: document.getElementById('genero').value,
         alinhamento: document.getElementById('alinhamento').value,
         altura: document.getElementById('altura').value,
-        personalidade: document.getElementById('personalidade').value,
-        historia: document.getElementById('historia').value,
+  personalidade: document.getElementById('personalidade').value,
+  historia: document.getElementById('historia').value,
+  observacoes: document.getElementById('observacoes').value,
         vocacao: document.getElementById('vocacao').value,
         especie: document.getElementById('especie').value,
         vidaAtual: document.getElementById('vidaAtual').value,
@@ -521,8 +558,9 @@
       document.getElementById('genero').value = ficha.genero || '';
       document.getElementById('alinhamento').value = ficha.alinhamento || '';
       document.getElementById('altura').value = ficha.altura || '';
-      document.getElementById('personalidade').value = ficha.personalidade || '';
-      document.getElementById('historia').value = ficha.historia || '';
+  document.getElementById('personalidade').value = ficha.personalidade || '';
+  document.getElementById('historia').value = ficha.historia || '';
+  document.getElementById('observacoes').value = ficha.observacoes || '';
       document.getElementById('vocacao').value = ficha.vocacao || '';
       document.getElementById('especie').value = ficha.especie || '';
       document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
@@ -619,29 +657,84 @@
         // Rolar pela categoria principal
         // Busca todos os níveis das perícias dessa categoria
         let temIntermediario = false;
-        let temIniciante = false;
+        let contadorPericiasTreinadas = 0;
+        let todasPericiasTreinadas = true;
         const cat = pericias.find(c => c.nome === catNome);
+        
         if (cat) {
           cat.habilidades.forEach(hab => {
-            const cbs = document.querySelectorAll(`#periciasContainer input[data-pericia='${hab}']`);
+            const cbs = document.querySelectorAll(`input[data-pericia='${hab}']`);
             let nivelHab = 0;
-            cbs.forEach(cb => { if (cb.checked) nivelHab = Math.max(nivelHab, parseInt(cb.dataset.nivel)); });
+            cbs.forEach(cb => { 
+              if (cb.checked) nivelHab = Math.max(nivelHab, parseInt(cb.dataset.nivel)); 
+            });
             if (nivelHab >= 2) temIntermediario = true;
-            else if (nivelHab === 1) temIniciante = true;
+            if (nivelHab >= 1) contadorPericiasTreinadas++;
+            else todasPericiasTreinadas = false; // Se alguma perícia não estiver treinada, marca como falso
           });
         }
-        if (temIntermediario) {
+        
+        // Verifica se há bônus de dado (todas as perícias treinadas)
+        let temDadoBonus = todasPericiasTreinadas && cat && cat.habilidades.length >= 4;
+        let bonusDado = temDadoBonus ? 1 : 0;
+        
+        // Nova regra ajustada:
+        // Se tiver pelo menos uma intermediária/mestre E 2+ perícias treinadas total, fica com 2d10 (melhor)
+        if (temIntermediario && contadorPericiasTreinadas >= 2) {
           dados = [rolarD10(), rolarD10()];
           resultado = Math.max(...dados);
-          explicacao = 'Categoria: 2d10 (melhor resultado, pois há pelo menos uma perícia intermediária/mestre)';
-        } else if (temIniciante) {
+          let textoBonus = '';
+          
+          if (temDadoBonus) {
+            let dadoBonus = rolarD10();
+            dados.push(dadoBonus);
+            resultado += bonusDado;
+            textoBonus = ` + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
+          }
+          
+          explicacao = `Categoria: 2d10 (melhor resultado, pois há pelo menos uma perícia intermediária/mestre e 2+ perícias treinadas)${textoBonus}`;
+        } 
+        // Se tiver pelo menos uma intermediária/mestre, mesmo que seja só 1 perícia treinada, fica com 1d10
+        else if (temIntermediario) {
           dados = [rolarD10()];
           resultado = dados[0];
-          explicacao = 'Categoria: 1d10 (há pelo menos uma perícia iniciante)';
-        } else {
+          
+          if (temDadoBonus) {
+            let dadoBonus = rolarD10();
+            dados.push(dadoBonus);
+            resultado += bonusDado;
+            explicacao = `Categoria: 1d10 (há uma perícia de nível intermediário/mestre) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
+          } else {
+            explicacao = 'Categoria: 1d10 (há uma perícia de nível intermediário/mestre)';
+          }
+        }
+        // Se tiver 2+ perícias treinadas (mesmo que nenhuma intermediária), fica com 1d10
+        else if (contadorPericiasTreinadas >= 2) {
+          dados = [rolarD10()];
+          resultado = dados[0];
+          
+          if (temDadoBonus) {
+            let dadoBonus = rolarD10();
+            dados.push(dadoBonus);
+            resultado += bonusDado;
+            explicacao = `Categoria: 1d10 (há pelo menos 2 perícias treinadas) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
+          } else {
+            explicacao = 'Categoria: 1d10 (há pelo menos 2 perícias treinadas)';
+          }
+        }
+        // Se tiver 0 perícias ou apenas 1 perícia treinada (nível 1), fica com 2d10 (pior)
+        else {
           dados = [rolarD10(), rolarD10()];
           resultado = Math.min(...dados);
-          explicacao = 'Categoria: 2d10 (pior resultado, pois não há nenhuma perícia treinada)';
+          
+          if (temDadoBonus) {
+            let dadoBonus = rolarD10();
+            dados.push(dadoBonus);
+            resultado += bonusDado;
+            explicacao = `Categoria: 2d10 (pior resultado, pois há menos de 2 perícias treinadas e nenhuma intermediária/mestre) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
+          } else {
+            explicacao = 'Categoria: 2d10 (pior resultado, pois há menos de 2 perícias treinadas e nenhuma intermediária/mestre)';
+          }
         }
         document.getElementById('resultadoRolagem').innerHTML =
           `<div class='mb-2'><b>${catNome}</b> (Categoria)</div>`+
@@ -651,7 +744,7 @@
         return;
       }
       // Perícia individual (como antes)
-      const cbs = document.querySelectorAll(`#periciasContainer input[data-pericia='${habNome}']`);
+      const cbs = document.querySelectorAll(`input[data-pericia='${habNome}']`);
       cbs.forEach(cb => { if (cb.checked) nivel = Math.max(nivel, parseInt(cb.dataset.nivel)); });
       if (nivel === 0) {
         dados = [rolarD10(), rolarD10()];
@@ -660,11 +753,11 @@
       } else if (nivel === 1) {
         dados = [rolarD10()];
         resultado = dados[0];
-        explicacao = 'Treinado: 1d10';
+        explicacao = 'Treinado (Nível 1): 1d10';
       } else {
         dados = [rolarD10(), rolarD10()];
         resultado = Math.max(...dados);
-        explicacao = 'Avançado/Mestre: 2d10 (melhor resultado)';
+        explicacao = 'Avançado/Mestre (Nível 2-3): 2d10 (melhor resultado)';
       }
       document.getElementById('resultadoRolagem').innerHTML =
         `<div class='mb-2'>${catNome} - <b>${habNome}</b></div>`+
