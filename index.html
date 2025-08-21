@@ -91,6 +91,10 @@
             <label for="vidaMaxima" class="block font-semibold">Vida Máxima</label>
             <input id="vidaMaxima" name="vidaMaxima" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
+          <div>
+            <label for="drive" class="block font-semibold">Drive</label>
+            <input id="drive" name="drive" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
         </div>
       </div>
       <br>
@@ -111,12 +115,19 @@
         </div>
     <!-- Perícias -->
     <div class="mt-8 flex gap-4">
-      <div class="flex flex-col gap-6">
+      <div class="flex flex-col gap-6 w-1/2">
         <div class="border-2 border-gray-300 rounded-xl p-4 bg-gray-50 max-w-xl">
           <h2 class="text-xl font-bold mb-2">🎲 Perícias</h2>
           <div id="periciasContainer" class="space-y-6"></div>
         </div>
-        
+      </div>
+      <div class="flex flex-col gap-6 w-1/2">
+        <div class="border-2 border-gray-300 rounded-xl p-4 bg-gray-50 max-w-xl">
+          <h2 class="text-xl font-bold mb-2 flex items-center justify-between">🏅 Marcos
+            <button id="btnAddMarco" type="button" class="ml-2 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">Adicionar</button>
+          </h2>
+          <div id="marcosContainer" class="space-y-4"></div>
+        </div>
       </div>
     </div>
 
@@ -156,6 +167,78 @@
     </div>
 
   <script>
+    // --- MARCOS ---
+    let marcos = [];
+
+    function renderMarcos() {
+      const container = document.getElementById('marcosContainer');
+      container.innerHTML = '';
+      if (!marcos.length) {
+        container.innerHTML = '<div class="text-gray-400 text-sm">Nenhum marco adicionado.</div>';
+        return;
+      }
+        // Opções agrupadas igual ao select da rolagem de dados
+        marcos.forEach((marco, idx) => {
+          const div = document.createElement('div');
+          div.className = 'border rounded-lg p-3 bg-white flex flex-col gap-2 relative';
+          let selectHtml = `<label class=\"font-semibold text-xs\">Afeta</label><select class=\"border rounded p-1 text-xs mb-1\" onchange=\"atualizarMarco(${idx}, 'alvo', this.value)\">`;
+          selectHtml += '<option value="">Selecione...</option>';
+          // Grupo de atributos
+          selectHtml += '<optgroup label="Atributos">';
+          pericias.forEach(cat => {
+            const selected = (marco.alvo === cat.nome) ? 'selected' : '';
+            selectHtml += `<option value=\"${cat.nome}\" ${selected}>${cat.icon} ${cat.nome}</option>`;
+          });
+          selectHtml += '</optgroup>';
+          // Grupo de perícias
+          selectHtml += '<optgroup label="Perícias">';
+          pericias.forEach(cat => {
+            cat.habilidades.forEach(hab => {
+              const selected = (marco.alvo === hab) ? 'selected' : '';
+              selectHtml += `<option value=\"${hab}\" ${selected}>${cat.icon} ${cat.nome} - ${hab}</option>`;
+            });
+          });
+          selectHtml += '</optgroup>';
+          selectHtml += '</select>';
+          div.innerHTML = `
+            <button type=\"button\" class=\"absolute top-2 right-2 text-red-500 hover:text-red-700\" title=\"Remover\" onclick=\"removerMarco(${idx})\">&times;</button>
+            <label class=\"font-semibold text-xs\">Título</label>
+            <input type=\"text\" class=\"border-b-2 border-gray-200 focus:border-blue-500 outline-none text-sm mb-1 bg-transparent\" value=\"${marco.titulo || ''}\" onchange=\"atualizarMarco(${idx}, 'titulo', this.value)\">
+            <label class=\"font-semibold text-xs\">Descrição</label>
+            <textarea rows=\"2\" class=\"border rounded p-1 text-xs mb-1\" onchange=\"atualizarMarco(${idx}, 'descricao', this.value)\">${marco.descricao || ''}</textarea>
+            <div class=\"grid grid-cols-4 gap-2 items-end\">
+              <div>
+                <label class=\"font-semibold text-xs\">Peso de Jogada</label>
+                <input type=\"number\" class=\"border-b-2 border-gray-200 focus:border-blue-500 outline-none text-sm w-full\" value=\"${marco.peso || 0}\" onchange=\"atualizarMarco(${idx}, 'peso', this.value)\">
+              </div>
+              <div class=\"col-span-3\">
+                ${selectHtml}
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function adicionarMarco() {
+      marcos.push({ titulo: '', descricao: '', peso: 0 });
+      renderMarcos();
+    }
+
+    function removerMarco(idx) {
+      marcos.splice(idx, 1);
+      renderMarcos();
+    }
+
+    function atualizarMarco(idx, campo, valor) {
+      if (campo === 'peso') valor = parseInt(valor) || 0;
+      marcos[idx][campo] = valor;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('btnAddMarco').addEventListener('click', adicionarMarco);
+      renderMarcos();
+    });
     // --- IMAGEM DO PERSONAGEM ---
     function compressImage(file, maxWidth, quality, callback) {
       const reader = new FileReader();
@@ -512,16 +595,18 @@
         genero: document.getElementById('genero').value,
         alinhamento: document.getElementById('alinhamento').value,
         altura: document.getElementById('altura').value,
-  personalidade: document.getElementById('personalidade').value,
-  historia: document.getElementById('historia').value,
-  observacoes: document.getElementById('observacoes').value,
+        personalidade: document.getElementById('personalidade').value,
+        historia: document.getElementById('historia').value,
+        observacoes: document.getElementById('observacoes').value,
         vocacao: document.getElementById('vocacao').value,
         especie: document.getElementById('especie').value,
         vidaAtual: document.getElementById('vidaAtual').value,
         vidaMaxima: document.getElementById('vidaMaxima').value,
+        drive: document.getElementById('drive').value,
         imagemPersonagem: document.getElementById('previewImagem').src || '',
         pericias: {},
-        periciasEspecificas: {}
+        periciasEspecificas: {},
+        marcos: marcos.slice()
       };
 
       document.querySelectorAll('input[data-pericia]').forEach(cb => {
@@ -544,6 +629,8 @@
     }
 
     function preencherFicha(ficha) {
+  marcos = Array.isArray(ficha.marcos) ? ficha.marcos.slice() : [];
+  renderMarcos();
       // Imagem do personagem
       if (ficha.imagemPersonagem) {
         document.getElementById('previewImagem').src = ficha.imagemPersonagem;
@@ -561,10 +648,11 @@
   document.getElementById('personalidade').value = ficha.personalidade || '';
   document.getElementById('historia').value = ficha.historia || '';
   document.getElementById('observacoes').value = ficha.observacoes || '';
-      document.getElementById('vocacao').value = ficha.vocacao || '';
-      document.getElementById('especie').value = ficha.especie || '';
-      document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
-      document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
+  document.getElementById('vocacao').value = ficha.vocacao || '';
+  document.getElementById('especie').value = ficha.especie || '';
+  document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
+  document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
+  document.getElementById('drive').value = ficha.drive || '';
 
       // Guarda o estado das perícias para aplicar após renderizar
       const estadoPericias = ficha.pericias || {};
@@ -653,89 +741,60 @@
       let explicacao = '';
       let dados = [];
       let resultado = 0;
+
+      // --- Cálculo de modificadores de marcos ---
+      // Para categoria: soma todos os marcos cujo alvo é o atributo
+      // Para perícia: soma todos os marcos cujo alvo é a perícia
+      let pesoMarcos = 0;
       if (isCategoria) {
-        // Rolar pela categoria principal
-        // Busca todos os níveis das perícias dessa categoria
+        pesoMarcos = marcos.filter(m => m.alvo === catNome).reduce((acc, m) => acc + (parseInt(m.peso) || 0), 0);
+      } else {
+        pesoMarcos = marcos.filter(m => m.alvo === habNome).reduce((acc, m) => acc + (parseInt(m.peso) || 0), 0);
+      }
+
+      // --- Lógica de rolagem ---
+      if (isCategoria) {
         let temIntermediario = false;
         let contadorPericiasTreinadas = 0;
         let todasPericiasTreinadas = true;
         const cat = pericias.find(c => c.nome === catNome);
-        
         if (cat) {
           cat.habilidades.forEach(hab => {
             const cbs = document.querySelectorAll(`input[data-pericia='${hab}']`);
             let nivelHab = 0;
-            cbs.forEach(cb => { 
-              if (cb.checked) nivelHab = Math.max(nivelHab, parseInt(cb.dataset.nivel)); 
-            });
+            cbs.forEach(cb => { if (cb.checked) nivelHab = Math.max(nivelHab, parseInt(cb.dataset.nivel)); });
             if (nivelHab >= 2) temIntermediario = true;
             if (nivelHab >= 1) contadorPericiasTreinadas++;
-            else todasPericiasTreinadas = false; // Se alguma perícia não estiver treinada, marca como falso
+            else todasPericiasTreinadas = false;
           });
         }
-        
-        // Verifica se há bônus de dado (todas as perícias treinadas)
         let temDadoBonus = todasPericiasTreinadas && cat && cat.habilidades.length >= 4;
-        let bonusDado = temDadoBonus ? 1 : 0;
-        
-        // Nova regra ajustada:
-        // Se tiver pelo menos uma intermediária/mestre E 2+ perícias treinadas total, fica com 2d10 (melhor)
+        let dadosBase = 0;
+        let modo = '';
         if (temIntermediario && contadorPericiasTreinadas >= 2) {
-          dados = [rolarD10(), rolarD10()];
-          resultado = Math.max(...dados);
-          let textoBonus = '';
-          
-          if (temDadoBonus) {
-            let dadoBonus = rolarD10();
-            dados.push(dadoBonus);
-            resultado += bonusDado;
-            textoBonus = ` + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
-          }
-          
-          explicacao = `Categoria: 2d10 (melhor resultado, pois há pelo menos uma perícia intermediária/mestre e 2+ perícias treinadas)${textoBonus}`;
-        } 
-        // Se tiver pelo menos uma intermediária/mestre, mesmo que seja só 1 perícia treinada, fica com 1d10
-        else if (temIntermediario) {
-          dados = [rolarD10()];
-          resultado = dados[0];
-          
-          if (temDadoBonus) {
-            let dadoBonus = rolarD10();
-            dados.push(dadoBonus);
-            resultado += bonusDado;
-            explicacao = `Categoria: 1d10 (há uma perícia de nível intermediário/mestre) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
-          } else {
-            explicacao = 'Categoria: 1d10 (há uma perícia de nível intermediário/mestre)';
-          }
+          dadosBase = 2;
+          modo = 'melhor';
+        } else if (temIntermediario) {
+          dadosBase = 1;
+          modo = '';
+        } else if (contadorPericiasTreinadas >= 2) {
+          dadosBase = 1;
+          modo = '';
+        } else {
+          dadosBase = 2;
+          modo = 'pior';
         }
-        // Se tiver 2+ perícias treinadas (mesmo que nenhuma intermediária), fica com 1d10
-        else if (contadorPericiasTreinadas >= 2) {
-          dados = [rolarD10()];
-          resultado = dados[0];
-          
-          if (temDadoBonus) {
-            let dadoBonus = rolarD10();
-            dados.push(dadoBonus);
-            resultado += bonusDado;
-            explicacao = `Categoria: 1d10 (há pelo menos 2 perícias treinadas) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
-          } else {
-            explicacao = 'Categoria: 1d10 (há pelo menos 2 perícias treinadas)';
-          }
-        }
-        // Se tiver 0 perícias ou apenas 1 perícia treinada (nível 1), fica com 2d10 (pior)
-        else {
-          dados = [rolarD10(), rolarD10()];
-          resultado = Math.min(...dados);
-          
-          if (temDadoBonus) {
-            let dadoBonus = rolarD10();
-            dados.push(dadoBonus);
-            resultado += bonusDado;
-            explicacao = `Categoria: 2d10 (pior resultado, pois há menos de 2 perícias treinadas e nenhuma intermediária/mestre) + Bônus de 1 por ter todas as perícias treinadas (${dadoBonus})`;
-          } else {
-            explicacao = 'Categoria: 2d10 (pior resultado, pois há menos de 2 perícias treinadas e nenhuma intermediária/mestre)';
-          }
-        }
+        let totalDados = dadosBase + (temDadoBonus ? 1 : 0) + pesoMarcos;
+        if (totalDados < 1) totalDados = 1;
+        // Rolagem dos dados
+        for (let i = 0; i < totalDados; i++) dados.push(rolarD10());
+        if (modo === 'melhor') resultado = Math.max(...dados);
+        else if (modo === 'pior') resultado = Math.min(...dados);
+        else resultado = dados[0];
+        let explicacaoBonus = '';
+        if (pesoMarcos !== 0) explicacaoBonus += `<br><span class='text-xs text-blue-700'>Modificador de marcos: ${pesoMarcos > 0 ? '+' : ''}${pesoMarcos} dado(s)</span>`;
+        if (temDadoBonus) explicacaoBonus += `<br><span class='text-xs text-green-700'>Bônus: +1 dado por todas as perícias treinadas</span>`;
+        explicacao = `Categoria: ${totalDados}d10${modo ? ' ('+modo+')' : ''}${explicacaoBonus}`;
         document.getElementById('resultadoRolagem').innerHTML =
           `<div class='mb-2'><b>${catNome}</b> (Categoria)</div>`+
           `<div class='mb-2'>${explicacao}</div>`+
@@ -743,22 +802,30 @@
           `<div class='mb-2'>Resultado escolhido: <span class='font-bold text-2xl text-blue-700'>${resultado}</span></div>`;
         return;
       }
-      // Perícia individual (como antes)
+      // Perícia individual
       const cbs = document.querySelectorAll(`input[data-pericia='${habNome}']`);
       cbs.forEach(cb => { if (cb.checked) nivel = Math.max(nivel, parseInt(cb.dataset.nivel)); });
+      let dadosBase = 0;
+      let modo = '';
       if (nivel === 0) {
-        dados = [rolarD10(), rolarD10()];
-        resultado = Math.min(...dados);
-        explicacao = 'Não treinado: 2d10 (pior resultado)';
+        dadosBase = 2;
+        modo = 'pior';
       } else if (nivel === 1) {
-        dados = [rolarD10()];
-        resultado = dados[0];
-        explicacao = 'Treinado (Nível 1): 1d10';
+        dadosBase = 1;
+        modo = '';
       } else {
-        dados = [rolarD10(), rolarD10()];
-        resultado = Math.max(...dados);
-        explicacao = 'Avançado/Mestre (Nível 2-3): 2d10 (melhor resultado)';
+        dadosBase = 2;
+        modo = 'melhor';
       }
+      let totalDados = dadosBase + pesoMarcos;
+      if (totalDados < 1) totalDados = 1;
+      for (let i = 0; i < totalDados; i++) dados.push(rolarD10());
+      if (modo === 'melhor') resultado = Math.max(...dados);
+      else if (modo === 'pior') resultado = Math.min(...dados);
+      else resultado = dados[0];
+      let explicacaoBonus = '';
+      if (pesoMarcos !== 0) explicacaoBonus += `<br><span class='text-xs text-blue-700'>Modificador de marcos: ${pesoMarcos > 0 ? '+' : ''}${pesoMarcos} dado(s)</span>`;
+      explicacao = `Perícia: ${totalDados}d10${modo ? ' ('+modo+')' : ''}${explicacaoBonus}`;
       document.getElementById('resultadoRolagem').innerHTML =
         `<div class='mb-2'>${catNome} - <b>${habNome}</b></div>`+
         `<div class='mb-2'>${explicacao}</div>`+
