@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha de RPG</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    input:focus {
+      outline: none !important;
+      box-shadow: none !important;
+      border-top: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-radius: 0 !important;
+    }
+    textarea {
+      border: 2px solid #d1d5db; /* gray-300 */
+      border-radius: 0.5rem;
+      background: #fff;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    textarea:focus {
+      border-color: #3b82f6 !important; /* blue-500 */
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 p-6">
   <div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-md">
@@ -12,36 +34,87 @@
 
     <!-- Dados básicos -->
     <div class="mb-6">
-      <label class="block font-semibold">Nome</label>
-      <input id="nome" type="text" class="w-full border rounded p-2 mb-4">
-
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label class="block font-semibold">Vocação</label>
-          <input id="vocacao" type="text" class="w-full border rounded p-2">
+      <div class="flex gap-6 items-start">
+        <!-- Imagem do personagem -->
+        <div class="flex flex-col items-center w-40 shrink-0">
+          <label class="block font-semibold mb-2">Imagem</label>
+          <div class="border-2 border-dashed border-gray-300 rounded-full w-32 h-32 flex items-center justify-center overflow-hidden bg-gray-50">
+            <img id="previewImagem" class="hidden object-cover w-32 h-32" alt="Preview">
+          </div>
+          <input type="file" id="imagemPersonagem" accept="image/*" class="hidden">
+          <button type="button" onclick="document.getElementById('imagemPersonagem').click()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs">Escolher Imagem</button>
+          <button id="removerImagem" type="button" onclick="removerImagem()" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hidden">Remover</button>
         </div>
-        <div>
-          <label class="block font-semibold">Espécie</label>
-          <input id="especie" type="text" class="w-full border rounded p-2">
+        <!-- Inputs principais -->
+        <div class="flex-1 grid grid-cols-4 gap-4">
+          <div class="col-span-3">
+            <label class="block font-semibold">Nome</label>
+            <input id="nome" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
+          </div>
+          <div class="col-span-1">
+            <label class="block font-semibold">Apelido</label>
+            <input id="apelido" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
+          </div>
+          <div class="col-span-2">
+            <label class="block font-semibold">Vocação</label>
+            <input id="vocacao" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div class="col-span-2">
+            <label class="block font-semibold">Espécie</label>
+            <input id="especie" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div>
+            <label class="block font-semibold">Idade</label>
+            <input id="idade" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div>
+            <label class="block font-semibold">Altura</label>
+            <input id="altura" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div>
+            <label class="block font-semibold">Gênero</label>
+            <input id="genero" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div>
+            <label class="block font-semibold">Alinhamento</label>
+            <input id="alinhamento" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          
+          <div>
+            <!-- Personalidade removida daqui, agora está em Backstory -->
+          </div>
+          <div>
+            <label class="block font-semibold">Vida Atual</label>
+            <input id="vidaAtual" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
+          <div>
+            <label class="block font-semibold">Vida Máxima</label>
+            <input id="vidaMaxima" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+          </div>
         </div>
       </div>
-
-      <div class="grid grid-cols-4 gap-4">
-        <div>
-          <label class="block font-semibold">Vida Atual</label>
-          <input id="vidaAtual" type="number" min="0" class="w-full border rounded p-2">
+      <br>
+      <div class="border-2 border-gray-300 rounded-xl p-4 bg-gray-50 ">
+          <h2 class="text-xl font-bold mb-2">📝 Backstory</h2>
+          <div class="mb-4">
+            <label class="block font-semibold mb-1">Personalidade</label>
+            <textarea id="personalidade" rows="2" class="w-full p-2 text-sm"></textarea>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">História</label>
+            <textarea id="historia" rows="4" class="w-full p-2 text-sm"></textarea>
+          </div>
         </div>
-        <div>
-          <label class="block font-semibold">Vida Máxima</label>
-          <input id="vidaMaxima" type="number" min="0" class="w-full border rounded p-2">
+    <!-- Perícias -->
+    <div class="mt-8 flex gap-4">
+      <div class="flex flex-col gap-6">
+        <div class="border-2 border-gray-300 rounded-xl p-4 bg-gray-50 max-w-xl">
+          <h2 class="text-xl font-bold mb-2">🎲 Perícias</h2>
+          <div id="periciasContainer" class="space-y-6"></div>
         </div>
+        
       </div>
     </div>
-
-    <!-- Perícias -->
-    <h2 class="text-xl font-bold mb-2">🎲 Perícias</h2>
-
-    <div id="periciasContainer" class="space-y-6"></div>
 
     <!-- Botões -->
     <div class="flex gap-4 justify-center mt-6 flex-wrap">
@@ -65,13 +138,13 @@
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span>🎲</span> Rolar Dados de Perícia</h2>
         <div class="mb-4">
           <label class="block font-semibold mb-1">Perícia</label>
-          <select id="selectPericia" class="w-full border rounded p-2">
+          <select id="selectPericia" class="w-full border rounded p-1.5 text-sm">
             <option value="">Selecione...</option>
           </select>
         </div>
         <div class="mb-4" id="divHabilidadeInterna" style="display:none;">
           <label class="block font-semibold mb-1">Habilidade</label>
-          <select id="selectHabilidadeInterna" class="w-full border rounded p-2"></select>
+          <select id="selectHabilidadeInterna" class="w-full border rounded p-1.5 text-sm"></select>
         </div>
         <button id="btnRolar" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-full font-bold">Rolar Dados</button>
         <div id="resultadoRolagem" class="mt-4 text-center text-lg font-semibold"></div>
@@ -79,6 +152,57 @@
     </div>
 
   <script>
+    // --- IMAGEM DO PERSONAGEM ---
+    function compressImage(file, maxWidth, quality, callback) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            const reader2 = new FileReader();
+            reader2.onload = (e) => {
+              callback(e.target.result);
+            };
+            reader2.readAsDataURL(blob);
+          }, 'image/jpeg', quality);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        compressImage(file, 600, 0.7, (base64) => {
+          document.getElementById('previewImagem').src = base64;
+          document.getElementById('previewImagem').classList.remove('hidden');
+          document.getElementById('removerImagem').classList.remove('hidden');
+        });
+      }
+    }
+
+    function removerImagem() {
+      document.getElementById('previewImagem').src = '';
+      document.getElementById('previewImagem').classList.add('hidden');
+      document.getElementById('removerImagem').classList.add('hidden');
+      document.getElementById('imagemPersonagem').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('imagemPersonagem').addEventListener('change', handleImageUpload);
+    });
     const pericias = [
       { icon: '💪', nome: 'Corpo', habilidades: ['Atletismo', 'Briga', 'Agilidade', 'Resistência'] },
       { icon: '🧠', nome: 'Mente', habilidades: ['Investigação', 'Conhecimento Geral', 'Conhecimento Específico', 'Intuição'] },
@@ -153,7 +277,8 @@
             const habilidadesTextarea = document.createElement('textarea');
             habilidadesTextarea.rows = 2;
             habilidadesTextarea.placeholder = 'Digite uma habilidade por linha';
-            habilidadesTextarea.className = 'w-full border rounded p-1 text-sm';
+            habilidadesTextarea.className = 'w-full border rounded p-1 text-xs leading-tight';
+            habilidadesTextarea.style.minHeight = '28px';
             habilidadesTextarea.dataset.periciaEspecifica = nome;
 
             habilidadesDiv.appendChild(habilidadesLabel);
@@ -236,10 +361,18 @@
     function coletarFicha() {
       const ficha = {
         nome: document.getElementById('nome').value,
+        apelido: document.getElementById('apelido').value,
+        idade: document.getElementById('idade').value,
+        genero: document.getElementById('genero').value,
+        alinhamento: document.getElementById('alinhamento').value,
+        altura: document.getElementById('altura').value,
+        personalidade: document.getElementById('personalidade').value,
+        historia: document.getElementById('historia').value,
         vocacao: document.getElementById('vocacao').value,
         especie: document.getElementById('especie').value,
         vidaAtual: document.getElementById('vidaAtual').value,
         vidaMaxima: document.getElementById('vidaMaxima').value,
+        imagemPersonagem: document.getElementById('previewImagem').src || '',
         pericias: {},
         periciasEspecificas: {}
       };
@@ -260,11 +393,26 @@
     }
 
     function preencherFicha(ficha) {
-      document.getElementById('nome').value = ficha.nome || '';
-      document.getElementById('vocacao').value = ficha.vocacao || '';
-      document.getElementById('especie').value = ficha.especie || '';
-      document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
-      document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
+      // Imagem do personagem
+      if (ficha.imagemPersonagem) {
+        document.getElementById('previewImagem').src = ficha.imagemPersonagem;
+        document.getElementById('previewImagem').classList.remove('hidden');
+        document.getElementById('removerImagem').classList.remove('hidden');
+      } else {
+        removerImagem();
+      }
+  document.getElementById('nome').value = ficha.nome || '';
+  document.getElementById('apelido').value = ficha.apelido || '';
+  document.getElementById('idade').value = ficha.idade || '';
+  document.getElementById('genero').value = ficha.genero || '';
+  document.getElementById('alinhamento').value = ficha.alinhamento || '';
+  document.getElementById('altura').value = ficha.altura || '';
+  document.getElementById('personalidade').value = ficha.personalidade || '';
+  document.getElementById('historia').value = ficha.historia || '';
+  document.getElementById('vocacao').value = ficha.vocacao || '';
+  document.getElementById('especie').value = ficha.especie || '';
+  document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
+  document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
 
       document.querySelectorAll('#periciasContainer input[type="checkbox"]').forEach(cb => {
         cb.checked = ficha.pericias?.[cb.dataset.pericia]?.[cb.dataset.nivel] || false;
