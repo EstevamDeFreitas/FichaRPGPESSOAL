@@ -37,59 +37,59 @@
       <div class="flex gap-6 items-start">
         <!-- Imagem do personagem -->
         <div class="flex flex-col items-center w-40 shrink-0">
-          <label class="block font-semibold mb-2">Imagem</label>
+          <label for="imagemPersonagem" class="block font-semibold mb-2">Imagem</label>
           <div class="border-2 border-dashed border-gray-300 rounded-full w-32 h-32 flex items-center justify-center overflow-hidden bg-gray-50">
             <img id="previewImagem" class="hidden object-cover w-32 h-32" alt="Preview">
           </div>
-          <input type="file" id="imagemPersonagem" accept="image/*" class="hidden">
+          <input type="file" id="imagemPersonagem" name="imagemPersonagem" accept="image/*" class="hidden">
           <button type="button" onclick="document.getElementById('imagemPersonagem').click()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs">Escolher Imagem</button>
           <button id="removerImagem" type="button" onclick="removerImagem()" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hidden">Remover</button>
         </div>
         <!-- Inputs principais -->
         <div class="flex-1 grid grid-cols-4 gap-4">
           <div class="col-span-3">
-            <label class="block font-semibold">Nome</label>
-            <input id="nome" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
+            <label for="nome" class="block font-semibold">Nome</label>
+            <input id="nome" name="nome" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
           </div>
           <div class="col-span-1">
-            <label class="block font-semibold">Apelido</label>
-            <input id="apelido" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
+            <label for="apelido" class="block font-semibold">Apelido</label>
+            <input id="apelido" name="apelido" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm mb-2 bg-transparent">
           </div>
           <div class="col-span-2">
-            <label class="block font-semibold">Vocação</label>
-            <input id="vocacao" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="vocacao" class="block font-semibold">Vocação</label>
+            <input id="vocacao" name="vocacao" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div class="col-span-2">
-            <label class="block font-semibold">Espécie</label>
-            <input id="especie" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="especie" class="block font-semibold">Espécie</label>
+            <input id="especie" name="especie" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div>
-            <label class="block font-semibold">Idade</label>
-            <input id="idade" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="idade" class="block font-semibold">Idade</label>
+            <input id="idade" name="idade" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div>
-            <label class="block font-semibold">Altura</label>
-            <input id="altura" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="altura" class="block font-semibold">Altura</label>
+            <input id="altura" name="altura" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div>
-            <label class="block font-semibold">Gênero</label>
-            <input id="genero" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="genero" class="block font-semibold">Gênero</label>
+            <input id="genero" name="genero" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div>
-            <label class="block font-semibold">Alinhamento</label>
-            <input id="alinhamento" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="alinhamento" class="block font-semibold">Alinhamento</label>
+            <input id="alinhamento" name="alinhamento" type="text" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           
           <div>
             <!-- Personalidade removida daqui, agora está em Backstory -->
           </div>
           <div>
-            <label class="block font-semibold">Vida Atual</label>
-            <input id="vidaAtual" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="vidaAtual" class="block font-semibold">Vida Atual</label>
+            <input id="vidaAtual" name="vidaAtual" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
           <div>
-            <label class="block font-semibold">Vida Máxima</label>
-            <input id="vidaMaxima" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
+            <label for="vidaMaxima" class="block font-semibold">Vida Máxima</label>
+            <input id="vidaMaxima" name="vidaMaxima" type="number" min="0" class="w-full border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:ring-0 rounded-none p-1.5 text-sm bg-transparent">
           </div>
         </div>
       </div>
@@ -97,12 +97,12 @@
       <div class="border-2 border-gray-300 rounded-xl p-4 bg-gray-50 ">
           <h2 class="text-xl font-bold mb-2">📝 Backstory</h2>
           <div class="mb-4">
-            <label class="block font-semibold mb-1">Personalidade</label>
-            <textarea id="personalidade" rows="2" class="w-full p-2 text-sm"></textarea>
+            <label for="personalidade" class="block font-semibold mb-1">Personalidade</label>
+            <textarea id="personalidade" name="personalidade" rows="2" class="w-full p-2 text-sm"></textarea>
           </div>
           <div>
-            <label class="block font-semibold mb-1">História</label>
-            <textarea id="historia" rows="4" class="w-full p-2 text-sm"></textarea>
+            <label for="historia" class="block font-semibold mb-1">História</label>
+            <textarea id="historia" name="historia" rows="4" class="w-full p-2 text-sm"></textarea>
           </div>
         </div>
     <!-- Perícias -->
@@ -120,7 +120,7 @@
     <div class="flex gap-4 justify-center mt-6 flex-wrap">
       <button onclick="limparFicha()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl">Limpar</button>
       <button onclick="exportarFicha()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-xl">Exportar</button>
-      <input type="file" id="importarInput" accept=".json" class="hidden" onchange="importarFicha(event)">
+      <input type="file" id="importarInput" name="importarInput" accept=".json" class="hidden" onchange="importarFicha(event)">
       <button onclick="document.getElementById('importarInput').click()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl">Importar</button>
     </div>
 
@@ -137,14 +137,14 @@
         <button id="fecharModalRolar" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span>🎲</span> Rolar Dados de Perícia</h2>
         <div class="mb-4">
-          <label class="block font-semibold mb-1">Perícia</label>
-          <select id="selectPericia" class="w-full border rounded p-1.5 text-sm">
+          <label for="selectPericia" class="block font-semibold mb-1">Perícia</label>
+          <select id="selectPericia" name="selectPericia" class="w-full border rounded p-1.5 text-sm">
             <option value="">Selecione...</option>
           </select>
         </div>
         <div class="mb-4" id="divHabilidadeInterna" style="display:none;">
-          <label class="block font-semibold mb-1">Habilidade</label>
-          <select id="selectHabilidadeInterna" class="w-full border rounded p-1.5 text-sm"></select>
+          <label for="selectHabilidadeInterna" class="block font-semibold mb-1">Habilidade</label>
+          <select id="selectHabilidadeInterna" name="selectHabilidadeInterna" class="w-full border rounded p-1.5 text-sm"></select>
         </div>
         <button id="btnRolar" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-full font-bold">Rolar Dados</button>
         <div id="resultadoRolagem" class="mt-4 text-center text-lg font-semibold"></div>
@@ -202,6 +202,20 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('imagemPersonagem').addEventListener('change', handleImageUpload);
+      
+      // Carrega a ficha salva no localStorage, se existir
+      const fichaSalva = localStorage.getItem('fichaRPG');
+      if (fichaSalva) {
+        try {
+          const ficha = JSON.parse(fichaSalva);
+          preencherFicha(ficha);
+        } catch (e) {
+          console.error('Erro ao carregar ficha salva:', e);
+        }
+      }
+      
+      // Certifica-se de que as perícias são renderizadas corretamente
+      renderPericias();
     });
     const pericias = [
       { icon: '💪', nome: 'Corpo', habilidades: ['Atletismo', 'Briga', 'Agilidade', 'Resistência'] },
@@ -212,14 +226,55 @@
 
     function renderPericias() {
       const container = document.getElementById('periciasContainer');
+      // Salvar o estado atual dos checkboxes antes de limpar
+      const estadoPericias = {};
+      document.querySelectorAll('input[data-pericia]').forEach(cb => {
+        const pericia = cb.dataset.pericia;
+        const nivel = cb.dataset.nivel;
+        if (!estadoPericias[pericia]) {
+          estadoPericias[pericia] = {};
+        }
+        estadoPericias[pericia][nivel] = cb.checked;
+      });
+      
+      // Salvar o estado atual dos textareas
+      const estadoTextareas = {};
+      document.querySelectorAll('textarea[data-pericia-especifica]').forEach(textarea => {
+        estadoTextareas[textarea.dataset.periciaEspecifica] = textarea.value;
+      });
+      
+      // Limpar o container
       container.innerHTML = '';
 
       // Lista de perícias que devem ter campo de habilidades expansível
       const periciasComInput = ['Conhecimento Geral', 'Conhecimento Específico', 'Ofícios', 'Medicina/Ofícios'];
 
       pericias.forEach(categoria => {
+        // Calcular quantidade de dados em efeito para a categoria
+        let temIntermediario = false;
+        let temIniciante = false;
+        
+        categoria.habilidades.forEach(hab => {
+          // Verifica se há perícias treinadas (nível 1) ou avançadas (nível 2 ou 3)
+          let nivelHab = 0;
+          if (estadoPericias[hab]) {
+            // Verifica o maior nível marcado
+            if (estadoPericias[hab]['3'] && estadoPericias[hab]['3'] === true) nivelHab = 3;
+            else if (estadoPericias[hab]['2'] && estadoPericias[hab]['2'] === true) nivelHab = 2;
+            else if (estadoPericias[hab]['1'] && estadoPericias[hab]['1'] === true) nivelHab = 1;
+          }
+          
+          if (nivelHab >= 2) temIntermediario = true;
+          else if (nivelHab === 1) temIniciante = true;
+        });
+        
+        let dadosTexto = '';
+        if (temIntermediario) dadosTexto = '2d10 (melhor)';
+        else if (temIniciante) dadosTexto = '1d10';
+        else dadosTexto = '2d10 (pior)';
+
         const bloco = document.createElement('div');
-        bloco.innerHTML = `<h3 class=\"font-bold text-lg mb-2\">${categoria.icon} ${categoria.nome}</h3>`;
+        bloco.innerHTML = `<h3 class=\"font-bold text-lg mb-2 flex items-center gap-2\">${categoria.icon} ${categoria.nome} <span class='text-xs font-normal bg-blue-100 text-blue-700 px-2 py-0.5 rounded'>${dadosTexto}</span></h3>`;
 
         categoria.habilidades.forEach(nome => {
           const linha = document.createElement('div');
@@ -236,7 +291,7 @@
           if (isExpansivel) {
             expandIcon = document.createElement('span');
             expandIcon.innerHTML = '<svg class="inline w-4 h-4 transition-transform" style="vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>';
-            expandIcon.className = 'text-gray-500 mr-1 select-none';
+            expandIcon.className = 'text-gray-500 mr-1 select-none cursor-pointer';
           } else {
             expandIcon = document.createElement('span');
             expandIcon.innerHTML = '<svg class="inline w-4 h-4" style="opacity:0;vertical-align:middle" viewBox="0 0 24 24"></svg>';
@@ -251,13 +306,29 @@
           linhaSuperior.appendChild(label);
 
           for (let i = 1; i <= 3; i++) {
+            const checkboxId = `pericia-${nome.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${i}`;
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
+            checkbox.id = checkboxId;
+            checkbox.name = checkboxId;
             checkbox.className = 'w-5 h-5 accent-blue-500';
             checkbox.dataset.pericia = nome;
             checkbox.dataset.nivel = i;
+            
+            // Restaurar estado
+            if (estadoPericias[nome] && estadoPericias[nome][i] !== undefined) {
+              checkbox.checked = estadoPericias[nome][i];
+            }
+            
             checkbox.addEventListener('change', handleNivelSelection);
             linhaSuperior.appendChild(checkbox);
+            
+            // Add hidden label for accessibility
+            const checkboxLabel = document.createElement('label');
+            checkboxLabel.htmlFor = checkboxId;
+            checkboxLabel.className = 'sr-only'; // Screen reader only
+            checkboxLabel.textContent = `Nível ${i} para ${nome}`;
+            linhaSuperior.appendChild(checkboxLabel);
           }
 
           linha.appendChild(linhaSuperior);
@@ -273,13 +344,22 @@
             const habilidadesLabel = document.createElement('label');
             habilidadesLabel.textContent = 'Habilidades:';
             habilidadesLabel.className = 'block text-sm font-medium mb-1';
+            const textareaId = `habilidades-${nome.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
+            habilidadesLabel.setAttribute('for', textareaId);
 
             const habilidadesTextarea = document.createElement('textarea');
+            habilidadesTextarea.id = textareaId;
+            habilidadesTextarea.name = textareaId;
             habilidadesTextarea.rows = 2;
             habilidadesTextarea.placeholder = 'Digite uma habilidade por linha';
             habilidadesTextarea.className = 'w-full border rounded p-1 text-xs leading-tight';
             habilidadesTextarea.style.minHeight = '28px';
             habilidadesTextarea.dataset.periciaEspecifica = nome;
+            
+            // Restaurar o conteúdo do textarea
+            if (estadoTextareas[nome] !== undefined) {
+              habilidadesTextarea.value = estadoTextareas[nome];
+            }
 
             habilidadesDiv.appendChild(habilidadesLabel);
             habilidadesDiv.appendChild(habilidadesTextarea);
@@ -309,17 +389,47 @@
       const nivel = parseInt(cb.dataset.nivel);
       const pericia = cb.dataset.pericia;
 
-      const checkboxes = [...document.querySelectorAll(`#periciasContainer input[data-pericia='${pericia}']`)];
-
+      // Busca os checkboxes desta perícia
+      const checkboxes = document.querySelectorAll(`input[data-pericia="${pericia}"]`);
+      
       if (cb.checked) {
+        // Se o checkbox foi marcado, marque também todos os níveis inferiores
         checkboxes.forEach(c => {
-          if (parseInt(c.dataset.nivel) <= nivel) c.checked = true;
+          if (parseInt(c.dataset.nivel) <= nivel) {
+            c.checked = true;
+          }
         });
       } else {
+        // Se o checkbox foi desmarcado, desmarque também todos os níveis superiores
         checkboxes.forEach(c => {
-          if (parseInt(c.dataset.nivel) >= nivel) c.checked = false;
+          if (parseInt(c.dataset.nivel) >= nivel) {
+            c.checked = false;
+          }
         });
       }
+      
+      // Salva o estado atual para não perder ao renderizar
+      const estadoAtual = {};
+      document.querySelectorAll('input[data-pericia]').forEach(checkbox => {
+        const pericName = checkbox.dataset.pericia;
+        const pericNivel = checkbox.dataset.nivel;
+        if (!estadoAtual[pericName]) {
+          estadoAtual[pericName] = {};
+        }
+        estadoAtual[pericName][pericNivel] = checkbox.checked;
+      });
+      
+      // Renderiza as perícias para atualizar a exibição
+      renderPericias();
+      
+      // Restaura o estado após renderizar
+      document.querySelectorAll('input[data-pericia]').forEach(checkbox => {
+        const pericName = checkbox.dataset.pericia;
+        const pericNivel = checkbox.dataset.nivel;
+        if (estadoAtual[pericName] && estadoAtual[pericName][pericNivel] !== undefined) {
+          checkbox.checked = estadoAtual[pericName][pericNivel];
+        }
+      });
     }
 
     function limparFicha() {
@@ -377,15 +487,19 @@
         periciasEspecificas: {}
       };
 
-      document.querySelectorAll('#periciasContainer input[type="checkbox"]').forEach(cb => {
-        if (!ficha.pericias[cb.dataset.pericia]) {
-          ficha.pericias[cb.dataset.pericia] = {};
+      document.querySelectorAll('input[data-pericia]').forEach(cb => {
+        const pericia = cb.dataset.pericia;
+        const nivel = cb.dataset.nivel;
+        
+        if (!ficha.pericias[pericia]) {
+          ficha.pericias[pericia] = {};
         }
-        ficha.pericias[cb.dataset.pericia][cb.dataset.nivel] = cb.checked;
+        
+        ficha.pericias[pericia][nivel] = cb.checked;
       });
 
       // Salva os valores dos campos de habilidades (textarea)
-      document.querySelectorAll('#periciasContainer textarea[data-pericia-especifica]').forEach(textarea => {
+      document.querySelectorAll('textarea[data-pericia-especifica]').forEach(textarea => {
         ficha.periciasEspecificas[textarea.dataset.periciaEspecifica] = textarea.value;
       });
 
@@ -401,29 +515,46 @@
       } else {
         removerImagem();
       }
-  document.getElementById('nome').value = ficha.nome || '';
-  document.getElementById('apelido').value = ficha.apelido || '';
-  document.getElementById('idade').value = ficha.idade || '';
-  document.getElementById('genero').value = ficha.genero || '';
-  document.getElementById('alinhamento').value = ficha.alinhamento || '';
-  document.getElementById('altura').value = ficha.altura || '';
-  document.getElementById('personalidade').value = ficha.personalidade || '';
-  document.getElementById('historia').value = ficha.historia || '';
-  document.getElementById('vocacao').value = ficha.vocacao || '';
-  document.getElementById('especie').value = ficha.especie || '';
-  document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
-  document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
+      document.getElementById('nome').value = ficha.nome || '';
+      document.getElementById('apelido').value = ficha.apelido || '';
+      document.getElementById('idade').value = ficha.idade || '';
+      document.getElementById('genero').value = ficha.genero || '';
+      document.getElementById('alinhamento').value = ficha.alinhamento || '';
+      document.getElementById('altura').value = ficha.altura || '';
+      document.getElementById('personalidade').value = ficha.personalidade || '';
+      document.getElementById('historia').value = ficha.historia || '';
+      document.getElementById('vocacao').value = ficha.vocacao || '';
+      document.getElementById('especie').value = ficha.especie || '';
+      document.getElementById('vidaAtual').value = ficha.vidaAtual || 0;
+      document.getElementById('vidaMaxima').value = ficha.vidaMaxima || 0;
 
-      document.querySelectorAll('#periciasContainer input[type="checkbox"]').forEach(cb => {
-        cb.checked = ficha.pericias?.[cb.dataset.pericia]?.[cb.dataset.nivel] || false;
-      });
+      // Guarda o estado das perícias para aplicar após renderizar
+      const estadoPericias = ficha.pericias || {};
+      const estadoPericiasEspecificas = ficha.periciasEspecificas || {};
 
-      // Preenche os valores dos campos de habilidades (textarea)
-      if (ficha.periciasEspecificas) {
-        document.querySelectorAll('#periciasContainer textarea[data-pericia-especifica]').forEach(textarea => {
-          textarea.value = ficha.periciasEspecificas[textarea.dataset.periciaEspecifica] || '';
+      // Renderiza as perícias
+      renderPericias();
+
+      // Aplica o estado das perícias após renderizar
+      setTimeout(() => {
+        // Aplica o estado dos checkboxes
+        document.querySelectorAll('input[data-pericia]').forEach(cb => {
+          const pericia = cb.dataset.pericia;
+          const nivel = cb.dataset.nivel;
+          if (estadoPericias[pericia] && estadoPericias[pericia][nivel] !== undefined) {
+            cb.checked = estadoPericias[pericia][nivel];
+          }
         });
-      }
+        // Aplica o valor dos textareas
+        document.querySelectorAll('textarea[data-pericia-especifica]').forEach(textarea => {
+          const pericia = textarea.dataset.periciaEspecifica;
+          if (estadoPericiasEspecificas[pericia] !== undefined) {
+            textarea.value = estadoPericiasEspecificas[pericia];
+          }
+        });
+        // Chama renderPericias novamente para atualizar a exibição dos dados
+        renderPericias();
+      }, 50);
     }
 
     renderPericias();
