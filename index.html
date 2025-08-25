@@ -352,17 +352,18 @@
     </div>
 
     <!-- Modal do Inventário -->
-    <div id="modalInventario" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
-      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-6xl h-4/5 overflow-y-auto relative">
-        <button id="fecharModalInventario" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 justify-between">
+    <!-- Janela Flutuante do Inventário -->
+    <div id="modalInventario" class="fixed bg-white rounded-2xl shadow-2xl p-0 w-full max-w-6xl hidden" style="top: 10%; left: 10%; z-index: 100; border: 2px solid #e5e7eb; min-width: 900px; min-height: 600px;">
+      <button id="fecharModalInventario" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl z-10">&times;</button>
+      <div id="cabecalhoInventario" class="cabecalho-arrastavel p-3 cursor-move select-none border-b">
+        <h2 class="text-xl font-bold flex items-center gap-2 justify-between">
           <span>🎒 Inventário & Equipamentos</span>
-          <button id="adicionarItem" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">+ Adicionar Item</button>
+          <button id="adicionarItem" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mr-12">+ Adicionar Item</button>
         </h2>
-        
-        <div class="flex gap-6 h-full">
+      </div>
+      <div class="p-4 flex gap-4 h-[calc(80vh-64px)] overflow-y-auto pt-1">
           <!-- Slots de Equipamentos (Esquerda) -->
-          <div class="w-80 bg-gray-50 rounded-lg p-4">
+          <div class="w-80 bg-gray-50 rounded-lg p-2">
             <h3 class="font-bold text-lg mb-4 text-center">⚔️ Equipamentos</h3>
             
             <div class="grid grid-cols-3 gap-3 mb-4">
@@ -1025,6 +1026,46 @@
         }
       });
     });
+
+    // --- INVENTÁRIO FLUTUANTE ARRASTÁVEL ---
+(function() {
+  let isDraggingInv = false;
+  let dragStartXInv, dragStartYInv, initialXInv, initialYInv;
+  const modalInventario = document.getElementById('modalInventario');
+  const cabecalhoInventario = document.getElementById('cabecalhoInventario');
+
+  if (cabecalhoInventario && modalInventario) {
+    cabecalhoInventario.addEventListener('mousedown', function(e) {
+      if (e.target.id === 'fecharModalInventario') return;
+      isDraggingInv = true;
+      dragStartXInv = e.clientX;
+      dragStartYInv = e.clientY;
+      const rect = modalInventario.getBoundingClientRect();
+      initialXInv = rect.left;
+      initialYInv = rect.top;
+      modalInventario.style.cursor = 'grabbing';
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!isDraggingInv) return;
+      e.preventDefault();
+      const deltaX = e.clientX - dragStartXInv;
+      const deltaY = e.clientY - dragStartYInv;
+      const newX = Math.max(0, Math.min(window.innerWidth - modalInventario.offsetWidth, initialXInv + deltaX));
+      const newY = Math.max(0, Math.min(window.innerHeight - modalInventario.offsetHeight, initialYInv + deltaY));
+      modalInventario.style.left = newX + 'px';
+      modalInventario.style.top = newY + 'px';
+      modalInventario.style.right = 'auto';
+    });
+    document.addEventListener('mouseup', function() {
+      if (isDraggingInv) {
+        isDraggingInv = false;
+        modalInventario.style.cursor = 'move';
+        document.body.style.userSelect = '';
+      }
+    });
+  }
+})();
 
     // Funcionalidade de arrastar janela
     let isDragging = false;
