@@ -531,6 +531,7 @@
                     <th class="text-left p-2">Nome</th>
                     <th class="text-left p-2 w-20">Tipo</th>
                     <th class="text-left p-2 w-16">Peso</th>
+                    <th class="text-left p-2 w-20">Qtd</th>
                     <th class="text-left p-2 w-20">Status</th>
                     <th class="text-left p-2 w-20">Ações</th>
                   </tr>
@@ -539,6 +540,11 @@
                   <!-- Itens serão renderizados aqui -->
                 </tbody>
               </table>
+            </div>
+            
+            <!-- Resumo do Inventário -->
+            <div id="resumoInventario" class="mt-3 p-2 bg-gray-50 rounded text-sm text-gray-600 border-t">
+              <!-- Será preenchido dinamicamente -->
             </div>
           </div>
         </div>
@@ -772,6 +778,12 @@
         
         if (!item.origem && item.sourceId) {
           item.origem = 'gerenciador';
+          houveMigracao = true;
+        }
+        
+        // Adicionar quantidade padrão se não existir
+        if (!item.quantidade || item.quantidade < 1) {
+          item.quantidade = 1;
           houveMigracao = true;
         }
       });
@@ -1271,7 +1283,7 @@
       tbody.innerHTML = '';
       
       if (!inventario.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400">Nenhum item no inventário.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Nenhum item no inventário.</td></tr>';
         return;
       }
 
@@ -1302,6 +1314,11 @@
         const statusText = item.equipadoEm ? 'Equipado' : (item.consumivel === 'true' ? 'Consumível' : 'Normal');
         const statusColor = item.equipadoEm ? 'text-green-600' : (item.consumivel === 'true' ? 'text-orange-600' : 'text-gray-600');
         
+        // Garantir que quantidade seja pelo menos 1
+        if (!item.quantidade || item.quantidade < 1) {
+          item.quantidade = 1;
+        }
+        
         tr.innerHTML = `
           <td class="p-2 text-center text-gray-500">${realIdx + 1}</td>
           <td class="p-2">
@@ -1311,7 +1328,14 @@
           <td class="p-2">
             <span class="px-2 py-1 rounded text-xs bg-gray-100">${item.tipo || '-'}</span>
           </td>
-          <td class="p-2 text-center">${item.peso ? item.peso + 'kg' : '-'}</td>
+          <td class="p-2 text-center">${item.peso ? (item.peso * (item.quantidade || 1)).toFixed(1) + 'kg' : '-'}</td>
+          <td class="p-2">
+            <div class="flex items-center gap-1">
+              <button onclick="alterarQuantidade(${realIdx}, -1)" class="w-6 h-6 flex items-center justify-center text-xs bg-red-100 hover:bg-red-200 text-red-600 rounded" title="Diminuir quantidade">-</button>
+              <span class="w-8 text-center text-sm font-medium">${item.quantidade || 1}</span>
+              <button onclick="alterarQuantidade(${realIdx}, 1)" class="w-6 h-6 flex items-center justify-center text-xs bg-green-100 hover:bg-green-200 text-green-600 rounded" title="Aumentar quantidade">+</button>
+            </div>
+          </td>
           <td class="p-2">
             <span class="text-xs ${statusColor}">${statusText}</span>
           </td>
@@ -1348,6 +1372,39 @@
         
         tbody.appendChild(tr);
       });
+      
+      // Atualizar resumo do inventário
+      atualizarResumoInventario();
+    }
+
+    function atualizarResumoInventario() {
+      const resumo = document.getElementById('resumoInventario');
+      if (!resumo) return;
+      
+      const totalItens = inventario.length;
+      const totalQuantidade = inventario.reduce((acc, item) => acc + (item.quantidade || 1), 0);
+      const pesoTotal = inventario.reduce((acc, item) => {
+        const peso = parseFloat(item.peso) || 0;
+        const quantidade = item.quantidade || 1;
+        return acc + (peso * quantidade);
+      }, 0);
+      
+      const itensEquipados = inventario.filter(item => item.equipadoEm).length;
+      const consumiveis = inventario.filter(item => item.consumivel === 'true').length;
+      
+      resumo.innerHTML = `
+        <div class="flex justify-between items-center flex-wrap gap-2">
+          <div class="flex gap-4 text-xs">
+            <span><strong>${totalItens}</strong> tipos de item</span>
+            <span><strong>${totalQuantidade}</strong> unidades totais</span>
+            <span><strong>${pesoTotal.toFixed(1)}kg</strong> de peso total</span>
+          </div>
+          <div class="flex gap-4 text-xs">
+            <span class="text-green-600"><strong>${itensEquipados}</strong> equipados</span>
+            <span class="text-orange-600"><strong>${consumiveis}</strong> consumíveis</span>
+          </div>
+        </div>
+      `;
     }
 
     function renderEquipamentos() {
@@ -1529,6 +1586,36 @@
       
       console.log(`Equipando item "${item.nome}" no slot "${slot}"`);
       
+      // Se o item tem quantidade > 1, perguntar se deve equipar separadamente
+      if (item.quantidade > 1) {
+        const equiparSeparadamente = confirm(`Este item tem quantidade ${item.quantidade}. Deseja equipar apenas uma unidade (recomendado) ou equipar todas as ${item.quantidade} unidades juntas?`);
+        
+        if (equiparSeparadamente) {
+          // Criar uma nova entrada no inventário apenas para o item equipado
+          const itemEquipado = {
+            ...item, // Copia todas as propriedades
+            id: gerarGUID(), // Novo ID único
+            quantidade: 1, // Apenas 1 unidade
+            equipadoEm: slot // Equipado no slot escolhido
+          };
+          
+          // Reduzir a quantidade do item original
+          item.quantidade -= 1;
+          
+          // Adicionar o item equipado ao inventário
+          inventario.push(itemEquipado);
+          
+          // Salvar no localStorage
+          localStorage.setItem('inventario', JSON.stringify(inventario));
+          
+          renderInventario();
+          
+          // Fechar menu
+          document.querySelectorAll('.fixed.bg-white.border').forEach(menu => menu.remove());
+          return;
+        }
+      }
+      
       // Verificar se slot está ocupado (exceto anéis que podem ter 2)
       if (slot !== 'anel') {
         const itemEquipado = inventario.find(i => i.equipadoEm === slot);
@@ -1582,6 +1669,47 @@
       
       // Fechar menu
       document.querySelectorAll('.fixed.bg-white.border').forEach(menu => menu.remove());
+    }
+
+    function alterarQuantidade(itemIdx, delta) {
+      // Validação de entrada
+      if (typeof itemIdx !== 'number' || itemIdx < 0 || itemIdx >= inventario.length) {
+        console.error('Índice de item inválido para alterar quantidade:', itemIdx);
+        return;
+      }
+      
+      const item = inventario[itemIdx];
+      if (!item) {
+        console.error('Item não encontrado no índice:', itemIdx);
+        return;
+      }
+      
+      // Garantir que quantidade seja pelo menos 1
+      if (!item.quantidade || item.quantidade < 1) {
+        item.quantidade = 1;
+      }
+      
+      // Aplicar a alteração
+      item.quantidade += delta;
+      
+      // Se a quantidade chegar a 0 ou menos, remover o item
+      if (item.quantidade <= 0) {
+        if (confirm(`Remover "${item.nome}" do inventário?`)) {
+          inventario.splice(itemIdx, 1);
+          console.log(`Item "${item.nome}" removido do inventário (quantidade chegou a 0)`);
+        } else {
+          // Se o usuário cancelar, manter pelo menos 1
+          item.quantidade = 1;
+        }
+      } else {
+        console.log(`Quantidade de "${item.nome}" alterada para ${item.quantidade}`);
+      }
+      
+      // Salvar no localStorage
+      localStorage.setItem('inventario', JSON.stringify(inventario));
+      
+      // Re-renderizar inventário
+      renderInventario();
     }
 
     function abrirModalItem() {
@@ -2000,6 +2128,9 @@
       window.editarItem = editarItem;
       window.removerItem = removerItem;
       window.removerImagem = removerImagem;
+      window.alterarQuantidade = alterarQuantidade;
+      window.gerarGUID = gerarGUID;
+      window.atualizarResumoInventario = atualizarResumoInventario;
 
       // Event Listeners para o inventário
       if (document.getElementById('inventarioBtn')) {
@@ -2341,6 +2472,7 @@
                   consumivel: itemData.consumivel || 'false',
                   equipadoEm: itemData.equipadoEm || '',
                   equipado: false,
+                  quantidade: 1, // Quantidade padrão para novos itens
                   // Metadados para rastreamento
                   criadoEm: new Date().toISOString(),
                   origem: 'gerenciador'
