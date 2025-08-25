@@ -26,6 +26,123 @@
       outline: none !important;
       box-shadow: none !important;
     }
+    
+    .janela-arrastavel {
+      transition: box-shadow 0.2s ease;
+    }
+    
+    .janela-arrastavel:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .cabecalho-arrastavel {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      border-bottom: 1px solid #d1d5db;
+    }
+    
+    /* Estilos para slots de equipamentos */
+    .equipment-slot {
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    
+    .equipment-slot.small {
+      min-height: 60px;
+      padding: 0.5rem;
+    }
+    
+    .equipment-slot:hover {
+      border-color: #3b82f6;
+      background: #f0f9ff;
+    }
+    
+    .equipment-slot.has-item {
+      border-style: solid;
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    
+    .equipment-slot.drag-over {
+      border-color: #f59e0b;
+      background: #fffbeb;
+      transform: scale(1.05);
+    }
+    
+    .slot-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .equipment-slot.small .slot-icon {
+      font-size: 1.2rem;
+    }
+    
+    .slot-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+    }
+    
+    .equipped-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f0fdf4;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .equipped-item-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #059669;
+      text-align: center;
+      line-height: 1.2;
+    }
+    
+    /* Estilos para a tabela de inventário */
+    .inventory-row {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .inventory-row:hover {
+      background: #f9fafb;
+    }
+    
+    .inventory-row.equipped {
+      background: #f0fdf4;
+      color: #059669;
+    }
+    
+    .item-draggable {
+      cursor: grab;
+    }
+    
+    .item-draggable:active {
+      cursor: grabbing;
+    }
+    
+    .cabecalho-arrastavel:hover {
+      background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+    }
   </style>
 </head>
 <body class="bg-gray-100 p-6">
@@ -191,6 +308,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061A1.125 1.125 0 0 1 3 16.811V8.69ZM12.75 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061a1.125 1.125 0 0 1-1.683-.977V8.69Z" />
         </svg>
       </button>
+      <button id="inventarioBtn" title="Inventário" class="bg-green-600 hover:bg-green-700 text-white rounded-l-xl rounded-r-none shadow-lg w-16 h-16 flex items-center justify-center border-r-4 border-green-800" style="z-index:51;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </svg>
+      </button>
       <button onclick="limparFicha()" title="Limpar Ficha" class="bg-red-600 hover:bg-red-700 text-white rounded-l-xl rounded-r-none shadow-lg w-16 h-16 flex items-center justify-center border-r-4 border-red-800" style="z-index:51;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -229,7 +351,727 @@
       </div>
     </div>
 
+    <!-- Modal do Inventário -->
+    <div id="modalInventario" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-6xl h-4/5 overflow-y-auto relative">
+        <button id="fecharModalInventario" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 justify-between">
+          <span>🎒 Inventário & Equipamentos</span>
+          <button id="adicionarItem" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">+ Adicionar Item</button>
+        </h2>
+        
+        <div class="flex gap-6 h-full">
+          <!-- Slots de Equipamentos (Esquerda) -->
+          <div class="w-80 bg-gray-50 rounded-lg p-4">
+            <h3 class="font-bold text-lg mb-4 text-center">⚔️ Equipamentos</h3>
+            
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <!-- Linha 1: Capacete -->
+              <div class="col-start-2">
+                <div id="slot-capacete" class="equipment-slot" data-slot="cabeca">
+                  <div class="slot-icon">🪖</div>
+                  <div class="slot-label">Capacete</div>
+                </div>
+              </div>
+              
+              <!-- Linha 2: Armadura -->
+              <div class="col-start-2">
+                <div id="slot-armadura" class="equipment-slot" data-slot="torso">
+                  <div class="slot-icon">🛡️</div>
+                  <div class="slot-label">Armadura</div>
+                </div>
+              </div>
+              
+              <!-- Linha 3: Luvas -->
+              <div class="col-start-2">
+                <div id="slot-luvas" class="equipment-slot" data-slot="luvas">
+                  <div class="slot-icon">🧤</div>
+                  <div class="slot-label">Luvas</div>
+                </div>
+              </div>
+              
+              <!-- Linha 4: Botas -->
+              <div class="col-start-2">
+                <div id="slot-botas" class="equipment-slot" data-slot="pes">
+                  <div class="slot-icon">🥾</div>
+                  <div class="slot-label">Botas</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Armas -->
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2 text-center">⚔️ Armas</h4>
+              <div class="grid grid-cols-2 gap-2">
+                <div id="slot-arma-principal" class="equipment-slot small" data-slot="mao_principal">
+                  <div class="slot-icon">⚔️</div>
+                  <div class="slot-label">Principal</div>
+                </div>
+                <div id="slot-arma-secundaria" class="equipment-slot small" data-slot="mao_secundaria">
+                  <div class="slot-icon">🗡️</div>
+                  <div class="slot-label">Secundária</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Acessórios -->
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2 text-center">💍 Acessórios</h4>
+              <div class="grid grid-cols-2 gap-2">
+                <div id="slot-anel1" class="equipment-slot small" data-slot="anel">
+                  <div class="slot-icon">💍</div>
+                  <div class="slot-label">Anel 1</div>
+                </div>
+                <div id="slot-anel2" class="equipment-slot small" data-slot="anel">
+                  <div class="slot-icon">💍</div>
+                  <div class="slot-label">Anel 2</div>
+                </div>
+                <div id="slot-colar" class="equipment-slot small col-span-2" data-slot="colar">
+                  <div class="slot-icon">📿</div>
+                  <div class="slot-label">Colar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Lista de Inventário (Direita) -->
+          <div class="flex-1">
+            <h3 class="font-bold text-lg mb-4">📦 Itens</h3>
+            
+            <!-- Filtros -->
+            <div class="mb-4 flex gap-2">
+              <select id="filtroTipo" class="border rounded px-3 py-1 text-sm">
+                <option value="">Todos os tipos</option>
+                <option value="arma">Armas</option>
+                <option value="capacete">Capacetes</option>
+                <option value="armadura">Armaduras</option>
+                <option value="luvas">Luvas</option>
+                <option value="botas">Botas</option>
+                <option value="anel">Anéis</option>
+                <option value="colar">Colares/Amuletos</option>
+                <option value="consumivel">Consumíveis</option>
+                <option value="ferramenta">Ferramentas</option>
+                <option value="outro">Outros</option>
+              </select>
+              <input type="text" id="buscaItem" placeholder="Buscar item..." class="border rounded px-3 py-1 text-sm flex-1">
+            </div>
+            
+            <!-- Tabela de Inventário -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm border-collapse">
+                <thead>
+                  <tr class="bg-gray-100 border-b">
+                    <th class="text-left p-2 w-8">#</th>
+                    <th class="text-left p-2">Nome</th>
+                    <th class="text-left p-2 w-20">Tipo</th>
+                    <th class="text-left p-2 w-16">Peso</th>
+                    <th class="text-left p-2 w-20">Status</th>
+                    <th class="text-left p-2 w-20">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="inventarioTabela">
+                  <!-- Itens serão renderizados aqui -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Janela de Item (flutuante) -->
+    <div id="itemWindow" class="fixed bg-white rounded-2xl shadow-2xl w-96 overflow-hidden cursor-move janela-arrastavel hidden" style="position: fixed; top: 20%; right: 20px; z-index: 100; border: 2px solid #e5e7eb;">
+      <div id="cabecalhoItem" class="cabecalho-arrastavel p-3 cursor-move select-none border-b">
+        <h2 class="text-lg font-bold" id="tituloModalItem">📦 Novo Item</h2>
+        <button id="fecharModalItem" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl cursor-pointer">&times;</button>
+      </div>
+      
+      <div class="p-4 max-h-96 overflow-y-auto">
+        <div class="space-y-3">
+        <div>
+          <label for="itemNome" class="block font-semibold mb-1 text-sm">Nome</label>
+          <input id="itemNome" type="text" class="w-full border rounded p-2 text-sm">
+        </div>
+        
+        <div>
+          <label for="itemDescricao" class="block font-semibold mb-1 text-sm">Descrição</label>
+          <textarea id="itemDescricao" rows="2" class="w-full border rounded p-2 text-sm"></textarea>
+        </div>
+        
+        <div>
+          <label for="itemTipoDano" class="block font-semibold mb-1 text-sm">Tipos de Dano</label>
+          <input id="itemTipoDano" type="text" placeholder="Ex: +3 de dano ácido" class="w-full border rounded p-2 text-sm">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="itemRecuperaVida" class="block font-semibold mb-1 text-xs">Recupera Vida</label>
+            <input id="itemRecuperaVida" type="number" min="0" class="w-full border rounded p-1 text-sm">
+          </div>
+          
+          <div>
+            <label for="itemPeso" class="block font-semibold mb-1 text-xs">Peso</label>
+            <input id="itemPeso" type="number" step="0.1" min="0" class="w-full border rounded p-1 text-sm">
+          </div>
+        </div>
+        
+        <div>
+          <label for="itemRecupera" class="block font-semibold mb-1 text-sm">Recupera</label>
+          <input id="itemRecupera" type="text" placeholder="Ex: Mana, Energia" class="w-full border rounded p-2 text-sm">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="itemConsumivel" class="block font-semibold mb-1 text-xs">Consumível</label>
+            <select id="itemConsumivel" class="w-full border rounded p-1 text-sm">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="itemTipo" class="block font-semibold mb-1 text-xs">Tipo</label>
+            <select id="itemTipo" class="w-full border rounded p-1 text-sm">
+              <option value="">Selecione...</option>
+              <option value="arma">Arma</option>
+              <option value="capacete">Capacete</option>
+              <option value="armadura">Armadura de Torso</option>
+              <option value="luvas">Luvas</option>
+              <option value="botas">Botas</option>
+              <option value="anel">Anel</option>
+              <option value="colar">Colar/Amuleto</option>
+              <option value="consumivel">Consumível</option>
+              <option value="ferramenta">Ferramenta</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label for="itemPropriedades" class="block font-semibold mb-1 text-sm">Propriedades</label>
+          <textarea id="itemPropriedades" rows="2" class="w-full border rounded p-2 text-sm"></textarea>
+        </div>
+        
+        <div>
+          <label for="itemEquipadoEm" class="block font-semibold mb-1 text-sm">Equipado em</label>
+          <select id="itemEquipadoEm" class="w-full border rounded p-2 text-sm">
+            <option value="">Não equipado</option>
+            <option value="cabeca">Cabeça</option>
+            <option value="torso">Torso</option>
+            <option value="luvas">Luvas</option>
+            <option value="pes">Pés</option>
+            <option value="mao_principal">Mão Principal</option>
+            <option value="mao_secundaria">Mão Secundária</option>
+            <option value="anel">Anel</option>
+            <option value="colar">Colar</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="flex gap-2 p-4 pt-2 border-t bg-gray-50">
+        <button id="salvarItem" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm flex-1">Salvar</button>
+        <button id="cancelarItem" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm">Cancelar</button>
+      </div>
+    </div>
+
   <script>
+    // --- INVENTÁRIO ---
+    let inventario = [];
+    let itemEditandoIndex = -1;
+
+    function renderInventario() {
+      renderInventarioTabela();
+      renderEquipamentos();
+    }
+
+    function renderInventarioTabela() {
+      const tbody = document.getElementById('inventarioTabela');
+      tbody.innerHTML = '';
+      
+      if (!inventario.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400">Nenhum item no inventário.</td></tr>';
+        return;
+      }
+
+      // Aplicar filtros
+      const filtroTipo = document.getElementById('filtroTipo')?.value || '';
+      const busca = document.getElementById('buscaItem')?.value.toLowerCase() || '';
+      
+      const itensFiltrados = inventario.filter(item => {
+        const matchTipo = !filtroTipo || item.tipo === filtroTipo;
+        const matchBusca = !busca || item.nome?.toLowerCase().includes(busca) || item.descricao?.toLowerCase().includes(busca);
+        return matchTipo && matchBusca;
+      });
+
+      itensFiltrados.forEach((item, idx) => {
+        const realIdx = inventario.indexOf(item);
+        const tr = document.createElement('tr');
+        tr.className = `inventory-row border-b ${item.equipadoEm ? 'equipped' : ''}`;
+        tr.draggable = true;
+        tr.dataset.itemIndex = realIdx;
+        
+        const statusText = item.equipadoEm ? 'Equipado' : (item.consumivel === 'true' ? 'Consumível' : 'Normal');
+        const statusColor = item.equipadoEm ? 'text-green-600' : (item.consumivel === 'true' ? 'text-orange-600' : 'text-gray-600');
+        
+        tr.innerHTML = `
+          <td class="p-2 text-center text-gray-500">${realIdx + 1}</td>
+          <td class="p-2">
+            <div class="font-medium">${item.nome || 'Item sem nome'}</div>
+            ${item.descricao ? `<div class="text-xs text-gray-500 truncate max-w-xs">${item.descricao}</div>` : ''}
+          </td>
+          <td class="p-2">
+            <span class="px-2 py-1 rounded text-xs bg-gray-100">${item.tipo || '-'}</span>
+          </td>
+          <td class="p-2 text-center">${item.peso ? item.peso + 'kg' : '-'}</td>
+          <td class="p-2">
+            <span class="text-xs ${statusColor}">${statusText}</span>
+          </td>
+          <td class="p-2">
+            <div class="flex gap-1">
+              <button onclick="editarItem(${realIdx})" class="text-blue-600 hover:text-blue-800" title="Editar">✏️</button>
+              <button onclick="removerItem(${realIdx})" class="text-red-600 hover:text-red-800" title="Remover">🗑️</button>
+              ${!item.equipadoEm ? `<button onclick="mostrarMenuEquipar(${realIdx}, event)" class="text-green-600 hover:text-green-800" title="Equipar">⚔️</button>` : `<button onclick="desequiparItem(${realIdx})" class="text-orange-600 hover:text-orange-800" title="Desequipar">📤</button>`}
+            </div>
+          </td>
+        `;
+        
+        // Adicionar eventos de drag
+        tr.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', realIdx);
+          tr.style.opacity = '0.5';
+        });
+        
+        tr.addEventListener('dragend', () => {
+          tr.style.opacity = '1';
+        });
+        
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderEquipamentos() {
+      // Limpar todos os slots
+      document.querySelectorAll('.equipment-slot').forEach(slot => {
+        slot.classList.remove('has-item');
+        const equippedItem = slot.querySelector('.equipped-item');
+        if (equippedItem) {
+          equippedItem.remove();
+        }
+      });
+
+      // Renderizar itens equipados
+      inventario.forEach((item, idx) => {
+        if (!item.equipadoEm) return;
+        
+        let slotId = '';
+        switch(item.equipadoEm) {
+          case 'cabeca':
+            slotId = 'slot-capacete';
+            break;
+          case 'torso':
+            slotId = 'slot-armadura';
+            break;
+          case 'pes':
+            slotId = 'slot-botas';
+            break;
+          case 'luvas':
+            slotId = 'slot-luvas';
+            break;
+          case 'mao_principal':
+            slotId = 'slot-arma-principal';
+            break;
+          case 'mao_secundaria':
+            slotId = 'slot-arma-secundaria';
+            break;
+          case 'anel':
+            // Para anéis, usar primeiro slot disponível
+            const anel1 = document.getElementById('slot-anel1');
+            const anel2 = document.getElementById('slot-anel2');
+            if (!anel1.classList.contains('has-item')) {
+              slotId = 'slot-anel1';
+            } else if (!anel2.classList.contains('has-item')) {
+              slotId = 'slot-anel2';
+            }
+            break;
+          case 'colar':
+            slotId = 'slot-colar';
+            break;
+        }
+        
+        if (slotId) {
+          const slot = document.getElementById(slotId);
+          if (slot) {
+            slot.classList.add('has-item');
+            
+            const equippedDiv = document.createElement('div');
+            equippedDiv.className = 'equipped-item';
+            equippedDiv.innerHTML = `<div class="equipped-item-name">${item.nome}</div>`;
+            equippedDiv.dataset.itemIndex = idx;
+            
+            // Adicionar menu de contexto
+            equippedDiv.addEventListener('contextmenu', (e) => {
+              e.preventDefault();
+              mostrarMenuEquipado(idx, e);
+            });
+            
+            slot.appendChild(equippedDiv);
+          }
+        }
+      });
+    }
+
+    // Funções para equipar/desequipar itens
+    function mostrarMenuEquipar(itemIdx, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const item = inventario[itemIdx];
+      const menu = document.createElement('div');
+      menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+      menu.style.left = event.pageX + 'px';
+      menu.style.top = event.pageY + 'px';
+      
+      const slotsCompativeis = getSlotsCompativeis(item);
+      
+      if (slotsCompativeis.length === 0) {
+        menu.innerHTML = '<div class="text-sm text-gray-500 p-2">Item não equipável</div>';
+      } else {
+        menu.innerHTML = slotsCompativeis.map(slot => 
+          `<button onclick="equiparItem(${itemIdx}, '${slot.value}')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">${slot.label}</button>`
+        ).join('');
+      }
+      
+      // Fechar menu ao clicar fora
+      const fecharMenu = (e) => {
+        if (!menu.contains(e.target)) {
+          menu.remove();
+          document.removeEventListener('click', fecharMenu);
+        }
+      };
+      
+      setTimeout(() => document.addEventListener('click', fecharMenu), 100);
+      document.body.appendChild(menu);
+    }
+
+    function mostrarMenuEquipado(itemIdx, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const menu = document.createElement('div');
+      menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+      menu.style.left = event.pageX + 'px';
+      menu.style.top = event.pageY + 'px';
+      
+      menu.innerHTML = `
+        <button onclick="desequiparItem(${itemIdx})" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">📤 Desequipar</button>
+        <button onclick="editarItem(${itemIdx})" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">✏️ Editar</button>
+      `;
+      
+      const fecharMenu = (e) => {
+        if (!menu.contains(e.target)) {
+          menu.remove();
+          document.removeEventListener('click', fecharMenu);
+        }
+      };
+      
+      setTimeout(() => document.addEventListener('click', fecharMenu), 100);
+      document.body.appendChild(menu);
+    }
+
+    function getSlotsCompativeis(item) {
+      const slots = [];
+      
+      switch(item.tipo) {
+        case 'arma':
+          slots.push(
+            { value: 'mao_principal', label: '⚔️ Mão Principal' },
+            { value: 'mao_secundaria', label: '🗡️ Mão Secundária' }
+          );
+          break;
+        case 'capacete':
+          slots.push({ value: 'cabeca', label: '🪖 Cabeça' });
+          break;
+        case 'armadura':
+          slots.push({ value: 'torso', label: '�️ Torso' });
+          break;
+        case 'luvas':
+          slots.push({ value: 'luvas', label: '🧤 Luvas' });
+          break;
+        case 'botas':
+          slots.push({ value: 'pes', label: '� Pés' });
+          break;
+        case 'anel':
+          slots.push({ value: 'anel', label: '💍 Anel' });
+          break;
+        case 'colar':
+          slots.push({ value: 'colar', label: '📿 Colar' });
+          break;
+      }
+      
+      return slots;
+    }
+
+    function equiparItem(itemIdx, slot) {
+      const item = inventario[itemIdx];
+      
+      // Verificar se slot está ocupado (exceto anéis que podem ter 2)
+      if (slot !== 'anel') {
+        const itemEquipado = inventario.find(i => i.equipadoEm === slot);
+        if (itemEquipado) {
+          if (!confirm(`Já existe um item equipado em ${slot.replace('_', ' ')}. Deseja substituir?`)) {
+            return;
+          }
+          itemEquipado.equipadoEm = '';
+        }
+      } else {
+        // Para anéis, verificar se já há 2 equipados
+        const aneisEquipados = inventario.filter(i => i.equipadoEm === 'anel').length;
+        if (aneisEquipados >= 2) {
+          alert('Já existem 2 anéis equipados. Desequipe um primeiro.');
+          return;
+        }
+      }
+      
+      item.equipadoEm = slot;
+      renderInventario();
+      
+      // Fechar menu
+      document.querySelectorAll('.fixed.bg-white.border').forEach(menu => menu.remove());
+    }
+
+    function desequiparItem(itemIdx) {
+      inventario[itemIdx].equipadoEm = '';
+      renderInventario();
+      
+      // Fechar menu
+      document.querySelectorAll('.fixed.bg-white.border').forEach(menu => menu.remove());
+    }
+
+    function abrirModalItem() {
+      itemEditandoIndex = -1;
+      document.getElementById('tituloModalItem').textContent = '📦 Novo Item';
+      limparFormularioItem();
+      
+      // Position the window and show it
+      const itemWindow = document.getElementById('itemWindow');
+      itemWindow.style.top = '20%';
+      itemWindow.style.right = '20px';
+      
+      itemWindow.classList.remove('hidden');
+    }
+
+    function editarItem(idx) {
+      itemEditandoIndex = idx;
+      const item = inventario[idx];
+      document.getElementById('tituloModalItem').textContent = '📦 Editar Item';
+      
+      // Preencher formulário
+      document.getElementById('itemNome').value = item.nome || '';
+      document.getElementById('itemDescricao').value = item.descricao || '';
+      document.getElementById('itemTipoDano').value = item.tipoDano || '';
+      document.getElementById('itemRecuperaVida').value = item.recuperaVida || '';
+      document.getElementById('itemRecupera').value = item.recupera || '';
+      document.getElementById('itemConsumivel').value = item.consumivel || 'false';
+      document.getElementById('itemPropriedades').value = item.propriedades || '';
+      document.getElementById('itemPeso').value = item.peso || '';
+      document.getElementById('itemTipo').value = item.tipo || '';
+      document.getElementById('itemEquipadoEm').value = item.equipadoEm || '';
+      
+      // Position the window and show it
+      const itemWindow = document.getElementById('itemWindow');
+      itemWindow.style.top = '20%';
+      itemWindow.style.right = '20px';
+      
+      itemWindow.classList.remove('hidden');
+    }
+
+    function limparFormularioItem() {
+      document.getElementById('itemNome').value = '';
+      document.getElementById('itemDescricao').value = '';
+      document.getElementById('itemTipoDano').value = '';
+      document.getElementById('itemRecuperaVida').value = '';
+      document.getElementById('itemRecupera').value = '';
+      document.getElementById('itemConsumivel').value = 'false';
+      document.getElementById('itemPropriedades').value = '';
+      document.getElementById('itemPeso').value = '';
+      document.getElementById('itemTipo').value = '';
+      document.getElementById('itemEquipadoEm').value = '';
+    }
+
+    function salvarItem() {
+      const item = {
+        nome: document.getElementById('itemNome').value,
+        descricao: document.getElementById('itemDescricao').value,
+        tipoDano: document.getElementById('itemTipoDano').value,
+        recuperaVida: document.getElementById('itemRecuperaVida').value,
+        recupera: document.getElementById('itemRecupera').value,
+        consumivel: document.getElementById('itemConsumivel').value,
+        propriedades: document.getElementById('itemPropriedades').value,
+        peso: document.getElementById('itemPeso').value,
+        tipo: document.getElementById('itemTipo').value,
+        equipadoEm: document.getElementById('itemEquipadoEm').value
+      };
+
+      if (itemEditandoIndex >= 0) {
+        inventario[itemEditandoIndex] = item;
+      } else {
+        inventario.push(item);
+      }
+
+      renderInventario();
+      document.getElementById('itemWindow').classList.add('hidden');
+    }
+
+    function removerItem(idx) {
+      if (confirm('Tem certeza que deseja remover este item?')) {
+        inventario.splice(idx, 1);
+        renderInventario();
+      }
+    }
+
+    // Event Listeners para o inventário
+    document.getElementById('inventarioBtn').onclick = function() {
+      document.getElementById('modalInventario').classList.remove('hidden');
+      renderInventario();
+    };
+
+    document.getElementById('fecharModalInventario').onclick = function() {
+      document.getElementById('modalInventario').classList.add('hidden');
+    };
+
+    document.getElementById('adicionarItem').onclick = abrirModalItem;
+
+    document.getElementById('fecharModalItem').onclick = function() {
+      document.getElementById('itemWindow').classList.add('hidden');
+    };
+
+    document.getElementById('salvarItem').onclick = salvarItem;
+
+    document.getElementById('cancelarItem').onclick = function() {
+      document.getElementById('itemWindow').classList.add('hidden');
+    };
+
+    // Event listeners para filtros do inventário
+    document.getElementById('filtroTipo').addEventListener('change', renderInventarioTabela);
+    document.getElementById('buscaItem').addEventListener('input', renderInventarioTabela);
+
+    // Event listeners para drag & drop nos slots
+    document.querySelectorAll('.equipment-slot').forEach(slot => {
+      slot.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        slot.classList.add('drag-over');
+      });
+
+      slot.addEventListener('dragleave', () => {
+        slot.classList.remove('drag-over');
+      });
+
+      slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        
+        const itemIdx = parseInt(e.dataTransfer.getData('text/plain'));
+        const item = inventario[itemIdx];
+        const slotType = slot.dataset.slot;
+        
+        // Verificar se o item é compatível com o slot
+        const slotsCompativeis = getSlotsCompativeis(item);
+        const isCompatible = slotsCompativeis.some(s => s.value === slotType);
+        
+        if (isCompatible) {
+          equiparItem(itemIdx, slotType);
+        } else {
+          alert('Este item não é compatível com este slot.');
+        }
+      });
+
+      // Click no slot para equipar
+      slot.addEventListener('click', () => {
+        if (slot.classList.contains('has-item')) return;
+        
+        const slotType = slot.dataset.slot;
+        const itensCompativeis = inventario
+          .map((item, idx) => ({ item, idx }))
+          .filter(({ item }) => !item.equipadoEm && getSlotsCompativeis(item).some(s => s.value === slotType));
+        
+        if (itensCompativeis.length === 0) {
+          alert('Nenhum item compatível disponível para este slot.');
+          return;
+        }
+        
+        if (itensCompativeis.length === 1) {
+          equiparItem(itensCompativeis[0].idx, slotType);
+        } else {
+          // Mostrar menu de seleção
+          const menu = document.createElement('div');
+          menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+          const rect = slot.getBoundingClientRect();
+          menu.style.left = rect.right + 10 + 'px';
+          menu.style.top = rect.top + 'px';
+          
+          menu.innerHTML = itensCompativeis.map(({ item, idx }) => 
+            `<button onclick="equiparItem(${idx}, '${slotType}')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">${item.nome}</button>`
+          ).join('');
+          
+          const fecharMenu = (e) => {
+            if (!menu.contains(e.target)) {
+              menu.remove();
+              document.removeEventListener('click', fecharMenu);
+            }
+          };
+          
+          setTimeout(() => document.addEventListener('click', fecharMenu), 100);
+          document.body.appendChild(menu);
+        }
+      });
+    });
+
+    // Funcionalidade de arrastar janela
+    let isDragging = false;
+    let dragStartX, dragStartY, initialX, initialY;
+
+    const itemWindow = document.getElementById('itemWindow');
+    const cabecalhoItem = document.getElementById('cabecalhoItem');
+
+    cabecalhoItem.addEventListener('mousedown', function(e) {
+      if (e.target.id === 'fecharModalItem') return; // Não arrastar se clicar no X
+      
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      
+      const rect = itemWindow.getBoundingClientRect();
+      initialX = rect.left;
+      initialY = rect.top;
+      
+      itemWindow.style.cursor = 'grabbing';
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      
+      e.preventDefault();
+      
+      const deltaX = e.clientX - dragStartX;
+      const deltaY = e.clientY - dragStartY;
+      
+      const newX = Math.max(0, Math.min(window.innerWidth - itemWindow.offsetWidth, initialX + deltaX));
+      const newY = Math.max(0, Math.min(window.innerHeight - itemWindow.offsetHeight, initialY + deltaY));
+      
+      itemWindow.style.left = newX + 'px';
+      itemWindow.style.top = newY + 'px';
+      itemWindow.style.right = 'auto'; // Remove right positioning
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (isDragging) {
+        isDragging = false;
+        itemWindow.style.cursor = 'move';
+        document.body.style.userSelect = '';
+      }
+    });
+
     // --- MARCOS ---
     let marcos = [];
 
@@ -618,9 +1460,40 @@
       if (!confirm('Tem certeza que deseja limpar todos os dados da ficha? Esta ação não pode ser desfeita.')) {
         return;
       }
+      
+      // Limpar localStorage
       localStorage.removeItem('fichaRPG');
+      
+      // Limpar campos de input e textarea
       document.querySelectorAll('input, textarea').forEach(el => el.value = '');
       document.querySelectorAll('#periciasContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
+      
+      // Limpar imagem do personagem
+      const imagemPersonagem = document.getElementById('previewImagem');
+      if (imagemPersonagem) {
+        imagemPersonagem.src = '';
+        imagemPersonagem.style.display = 'none';
+        imagemPersonagem.classList.add('hidden');
+      }
+      
+      // Limpar input de arquivo da imagem
+      const inputImagem = document.getElementById('imagemPersonagem');
+      if (inputImagem) {
+        inputImagem.value = '';
+      }
+      
+      // Limpar inventário
+      inventario = [];
+      renderInventario();
+      
+      // Limpar marcos
+      marcos = [];
+      renderMarcos();
+      
+      // Limpar habilidades
+      habilidades = [];
+      renderHabilidades();
+      
       alert('Ficha apagada.');
     }
 
@@ -674,7 +1547,8 @@
         pericias: {},
         periciasEspecificas: {},
         marcos: marcos.slice(),
-        habilidades: habilidades.slice()
+        habilidades: habilidades.slice(),
+        inventario: inventario.slice()
       };
 
       document.querySelectorAll('input[data-pericia]').forEach(cb => {
@@ -701,6 +1575,7 @@
   renderMarcos();
   habilidades = Array.isArray(ficha.habilidades) ? ficha.habilidades.slice() : [];
   renderHabilidades();
+  inventario = Array.isArray(ficha.inventario) ? ficha.inventario.slice() : [];
       // Imagem do personagem
       if (ficha.imagemPersonagem) {
         document.getElementById('previewImagem').src = ficha.imagemPersonagem;
