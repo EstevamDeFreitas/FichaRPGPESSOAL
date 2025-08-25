@@ -140,8 +140,72 @@
       cursor: grabbing;
     }
     
+    /* Estilos para o gerenciador de conteúdo */
+    .item-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      cursor: grab;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .item-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    .item-card:active {
+      cursor: grabbing;
+    }
+    
+    .item-card.dragging {
+      opacity: 0.5;
+      transform: rotate(5deg);
+    }
+    
+    .item-card-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.25rem;
+    }
+    
+    .item-card-type {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    
+    .item-card-description {
+      font-size: 0.75rem;
+      color: #4b5563;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    
+    .item-card-actions {
+      display: flex;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+    
+    .raridade-comum { border-left: 4px solid #6b7280; }
+    .raridade-incomum { border-left: 4px solid #10b981; }
+    .raridade-raro { border-left: 4px solid #3b82f6; }
+    .raridade-epico { border-left: 4px solid #8b5cf6; }
+    .raridade-lendario { border-left: 4px solid #f59e0b; }
+    
     .cabecalho-arrastavel:hover {
       background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+    }
+    
+    /* Forçar exibição do modal */
+    .modal-show {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
   </style>
 </head>
@@ -292,10 +356,7 @@
     renderHabilidades();
   }
 
-  document.getElementById('btnAddHabilidade').onclick = function() {
-    habilidades.push({ nome: '', descricao: '', jogabilidade: '' });
-    renderHabilidades();
-  };
+  // (btnAddHabilidade movido para DOMContentLoaded)
 
   renderHabilidades();
 </script>
@@ -311,6 +372,11 @@
       <button id="inventarioBtn" title="Inventário" class="bg-green-600 hover:bg-green-700 text-white rounded-l-xl rounded-r-none shadow-lg w-16 h-16 flex items-center justify-center border-r-4 border-green-800" style="z-index:51;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </svg>
+      </button>
+      <button id="gerenciadorBtn" title="Gerenciador de Conteúdo" class="bg-orange-600 hover:bg-orange-700 text-white rounded-l-xl rounded-r-none shadow-lg w-16 h-16 flex items-center justify-center border-r-4 border-orange-800" style="z-index:51;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.563c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
         </svg>
       </button>
       <button onclick="limparFicha()" title="Limpar Ficha" class="bg-red-600 hover:bg-red-700 text-white rounded-l-xl rounded-r-none shadow-lg w-16 h-16 flex items-center justify-center border-r-4 border-red-800" style="z-index:51;">
@@ -358,7 +424,6 @@
       <div id="cabecalhoInventario" class="cabecalho-arrastavel p-3 cursor-move select-none border-b">
         <h2 class="text-xl font-bold flex items-center gap-2 justify-between">
           <span>🎒 Inventário & Equipamentos</span>
-          <button id="adicionarItem" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mr-12">+ Adicionar Item</button>
         </h2>
       </div>
       <div class="p-4 flex gap-4 h-[calc(80vh-64px)] overflow-y-auto pt-1">
@@ -531,6 +596,19 @@
           </div>
           
           <div>
+            <label for="itemRaridade" class="block font-semibold mb-1 text-xs">Raridade</label>
+            <select id="itemRaridade" class="w-full border rounded p-1 text-sm">
+              <option value="comum">Comum</option>
+              <option value="incomum">Incomum</option>
+              <option value="raro">Raro</option>
+              <option value="epico">Épico</option>
+              <option value="lendario">Lendário</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-2">
+          <div>
             <label for="itemTipo" class="block font-semibold mb-1 text-xs">Tipo</label>
             <select id="itemTipo" class="w-full border rounded p-1 text-sm">
               <option value="">Selecione...</option>
@@ -575,10 +653,611 @@
       </div>
     </div>
 
+    <!-- Input oculto para importar itens -->
+    <input type="file" id="importarItensInput" accept=".json" class="hidden">
+
+    <!-- Janela do Gerenciador de Conteúdo (flutuante) - MOVIDO PARA FORA DO CONTAINER -->
+    <div id="modalGerenciador" class="fixed bg-white rounded-2xl shadow-2xl p-0 w-full max-w-5xl hidden" style="top: 5%; left: 5%; z-index: 100; border: 2px solid #e5e7eb; min-width: 800px; min-height: 700px;">
+      <button onclick="document.getElementById('modalGerenciador').classList.add('hidden')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl z-10">&times;</button>
+      <div id="cabecalhoGerenciador" class="cabecalho-arrastavel p-3 cursor-move select-none border-b">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <span>🗃️ Gerenciador de Conteúdo</span>
+        </h2>
+      </div>
+      
+      <div class="p-4 h-[calc(85vh-64px)] overflow-y-auto">
+        <!-- Abas -->
+        <div class="flex border-b mb-4">
+          <button id="abaItens" class="px-4 py-2 border-b-2 border-orange-500 text-orange-600 font-semibold">📦 Itens</button>
+          <button class="px-4 py-2 text-gray-500 cursor-not-allowed" disabled>🏛️ Locais (Em breve)</button>
+          <button class="px-4 py-2 text-gray-500 cursor-not-allowed" disabled>👥 NPCs (Em breve)</button>
+        </div>
+        
+        <!-- Conteúdo da aba Itens -->
+        <div id="conteudoItens">
+          <!-- Barra de ferramentas -->
+          <div class="flex gap-3 mb-4 flex-wrap">
+            <button id="criarItemGerenciador" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+              <span>➕</span> Criar Item
+            </button>
+            <button id="importarItensBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+              <span>📥</span> Importar Lista
+            </button>
+            <button id="exportarItensBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+              <span>📤</span> Exportar Lista
+            </button>
+            <div class="flex-1"></div>
+            <input type="text" id="buscarItensGerenciador" placeholder="Buscar itens..." class="border rounded px-3 py-2 text-sm w-64">
+          </div>
+          
+          <!-- Filtros -->
+          <div class="flex gap-3 mb-4">
+            <select id="filtroTipoGerenciador" class="border rounded px-3 py-2 text-sm">
+              <option value="">Todos os tipos</option>
+              <option value="arma">Armas</option>
+              <option value="capacete">Capacetes</option>
+              <option value="armadura">Armaduras</option>
+              <option value="luvas">Luvas</option>
+              <option value="botas">Botas</option>
+              <option value="anel">Anéis</option>
+              <option value="colar">Colares/Amuletos</option>
+              <option value="consumivel">Consumíveis</option>
+              <option value="ferramenta">Ferramentas</option>
+              <option value="outro">Outros</option>
+            </select>
+            <select id="filtroRaridadeGerenciador" class="border rounded px-3 py-2 text-sm">
+              <option value="">Todas as raridades</option>
+              <option value="comum">Comum</option>
+              <option value="incomum">Incomum</option>
+              <option value="raro">Raro</option>
+              <option value="epico">Épico</option>
+              <option value="lendario">Lendário</option>
+            </select>
+          </div>
+          
+          <!-- Lista de Itens do Gerenciador -->
+          <div class="border rounded-lg bg-gray-50 p-4 h-96 overflow-y-auto">
+            <div id="listaItensGerenciador" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <!-- Itens do gerenciador serão renderizados aqui -->
+            </div>
+            <div id="nenhumItemGerenciador" class="text-center text-gray-500 py-8 hidden">
+              Nenhum item encontrado. Crie ou importe itens para começar.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <script>
     // --- INVENTÁRIO ---
+    // === SISTEMA DE IDENTIFICAÇÃO ÚNICA (GUID) ===
+    function gerarGUID() {
+      return 'item_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 16);
+    }
+
+    // Função para gerar GUID único no contexto do gerenciador
+    function gerarGUIDUnicoGerenciador() {
+      let novoId;
+      let tentativas = 0;
+      do {
+        novoId = gerarGUID();
+        tentativas++;
+        if (tentativas > 100) {
+          // Fallback para evitar loop infinito
+          novoId = gerarGUID() + '_' + tentativas;
+          break;
+        }
+      } while (itensGerenciador.some(item => item.id === novoId));
+      
+      return novoId;
+    }
+
+    // Função para migrar dados antigos do sistema de sincronização
+    function migrarDadosInventario() {
+      let houveMigracao = false;
+      
+      inventario.forEach(item => {
+        // Migrar gerenciadorId para sourceId se necessário
+        if (item.gerenciadorId && !item.sourceId) {
+          item.sourceId = item.gerenciadorId;
+          delete item.gerenciadorId;
+          houveMigracao = true;
+        }
+        
+        // Garantir que todos os itens tenham metadados básicos
+        if (!item.criadoEm) {
+          item.criadoEm = new Date().toISOString();
+          houveMigracao = true;
+        }
+        
+        if (!item.origem && item.sourceId) {
+          item.origem = 'gerenciador';
+          houveMigracao = true;
+        }
+      });
+      
+      // Salvar se houve migração
+      if (houveMigracao) {
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        console.log('🔄 Dados do inventário migrados para o novo sistema');
+      }
+    }
+
+    // Função de debug para verificar equipamentos
+    function debugEquipamentos() {
+      console.group('⚔️ Debug - Sistema de Equipamentos');
+      
+      const itensEquipados = inventario.filter(item => item.equipadoEm);
+      console.log('📋 Itens equipados:', itensEquipados.length);
+      
+      itensEquipados.forEach(item => {
+        console.log(`- ${item.nome} → ${item.equipadoEm} (ID: ${item.id})`);
+      });
+      
+      // Verificar conflitos nos slots
+      const slotsOcupados = {};
+      itensEquipados.forEach(item => {
+        const slot = item.equipadoEm;
+        if (!slotsOcupados[slot]) {
+          slotsOcupados[slot] = [];
+        }
+        slotsOcupados[slot].push(item);
+      });
+      
+      console.log('\n🔍 Status dos slots:');
+      Object.entries(slotsOcupados).forEach(([slot, itens]) => {
+        if (slot === 'anel' && itens.length > 2) {
+          console.warn(`⚠️ Slot ${slot}: ${itens.length} itens (máximo 2)`);
+        } else if (slot !== 'anel' && itens.length > 1) {
+          console.warn(`⚠️ Slot ${slot}: ${itens.length} itens (máximo 1)`);
+        } else {
+          console.log(`✅ Slot ${slot}: ${itens.length} item(s)`);
+        }
+      });
+      
+      console.groupEnd();
+    }
+
+    // Função de debug para verificar sincronização (pode ser removida em produção)
+    function debugSincronizacao() {
+      console.group('🔍 Debug - Estado da Sincronização');
+      console.log('📦 Itens no Gerenciador:', itensGerenciador.length);
+      console.log('🎒 Itens no Inventário:', inventario.length);
+      
+      // Verificar duplicatas no gerenciador
+      const idsGerenciador = itensGerenciador.map(item => item.id);
+      const duplicatasGerenciador = idsGerenciador.filter((id, index) => idsGerenciador.indexOf(id) !== index);
+      if (duplicatasGerenciador.length > 0) {
+        console.warn('⚠️ Duplicatas encontradas no gerenciador:', duplicatasGerenciador);
+      } else {
+        console.log('✅ Nenhuma duplicata no gerenciador');
+      }
+      
+      // Verificar possíveis duplicatas por conteúdo
+      const duplicatasConteudo = [];
+      itensGerenciador.forEach((item, index) => {
+        const duplicata = itensGerenciador.find((outro, outroIndex) => 
+          index !== outroIndex && itemEhDuplicataPorConteudo(item, [outro])
+        );
+        if (duplicata && !duplicatasConteudo.some(d => d.id === item.id)) {
+          duplicatasConteudo.push(item);
+        }
+      });
+      
+      if (duplicatasConteudo.length > 0) {
+        console.warn('⚠️ Possíveis duplicatas por conteúdo:', duplicatasConteudo.map(item => `${item.nome} (${item.id})`));
+      }
+      
+      console.log('\n📋 Mapeamento de Sincronização:');
+      itensGerenciador.forEach(itemGer => {
+        const estaNoInv = itemEstaNoInventario(itemGer.id);
+        const itemInv = encontrarItemNoInventario(itemGer.id);
+        console.log(`- ${itemGer.nome} (${itemGer.id}): ${estaNoInv ? '✅ Sincronizado' : '⚪ Não no inventário'}`);
+        if (itemInv) {
+          console.log(`  └─ Inventário ID: ${itemInv.id}, Source: ${itemInv.sourceId || itemInv.gerenciadorId || 'N/A'}`);
+        }
+      });
+      
+      console.log('\n🔗 Itens órfãos no inventário (sem source):');
+      const orfaos = inventario.filter(item => !item.sourceId && !item.gerenciadorId);
+      orfaos.forEach(item => {
+        console.log(`- ${item.nome} (${item.id}): Sem referência ao gerenciador`);
+      });
+      
+      console.groupEnd();
+    }
+
+    // Função para verificar se um item é duplicata por conteúdo (além do ID)
+    function itemEhDuplicataPorConteudo(novoItem, listaExistente) {
+      return listaExistente.some(existente => 
+        existente.nome === novoItem.nome && 
+        existente.tipo === novoItem.tipo &&
+        existente.descricao === novoItem.descricao &&
+        existente.raridade === novoItem.raridade
+      );
+    }
+
+    // Função para verificar se um item do gerenciador está no inventário
+    function itemEstaNoInventario(itemGerenciadorId) {
+      return inventario.some(invItem => 
+        invItem.sourceId === itemGerenciadorId || 
+        invItem.gerenciadorId === itemGerenciadorId || // Compatibilidade com dados antigos
+        invItem.id === itemGerenciadorId
+      );
+    }
+
+    // Função para encontrar item no inventário por ID do gerenciador
+    function encontrarItemNoInventario(itemGerenciadorId) {
+      return inventario.find(invItem => 
+        invItem.sourceId === itemGerenciadorId || 
+        invItem.gerenciadorId === itemGerenciadorId || // Compatibilidade com dados antigos
+        invItem.id === itemGerenciadorId
+      );
+    }
+
     let inventario = [];
     let itemEditandoIndex = -1;
+
+    // --- GERENCIADOR DE CONTEÚDO ---
+    let itensGerenciador = [];
+    let itemEditandoGerenciador = null;
+
+    // Função para tornar elementos arrastáveis
+    function tornarArrastavel(elementoId, cabecalhoId) {
+      const elemento = document.getElementById(elementoId);
+      const cabecalho = document.getElementById(cabecalhoId);
+      
+      if (!elemento || !cabecalho) return;
+      
+      let isDragging = false;
+      let currentX;
+      let currentY;
+      let initialX;
+      let initialY;
+      let xOffset = 0;
+      let yOffset = 0;
+
+      cabecalho.addEventListener('mousedown', dragStart);
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', dragEnd);
+
+      function dragStart(e) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+
+        if (e.target === cabecalho || cabecalho.contains(e.target)) {
+          isDragging = true;
+          cabecalho.style.cursor = 'grabbing';
+        }
+      }
+
+      function drag(e) {
+        if (isDragging) {
+          e.preventDefault();
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+
+          xOffset = currentX;
+          yOffset = currentY;
+
+          elemento.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        }
+      }
+
+      function dragEnd() {
+        if (isDragging) {
+          initialX = currentX;
+          initialY = currentY;
+          isDragging = false;
+          cabecalho.style.cursor = 'move';
+        }
+      }
+    }
+
+    // Carregar itens do gerenciador do localStorage
+    function carregarItensGerenciador() {
+      const itens = localStorage.getItem('itensGerenciador');
+      if (itens) {
+        try {
+          const itensCarregados = JSON.parse(itens);
+          itensGerenciador.length = 0; // Limpar array para evitar duplicação
+          itensGerenciador.push(...itensCarregados); // Adicionar itens carregados
+          console.log('🗃️ Itens do gerenciador carregados:', itensGerenciador.length, 'itens');
+          
+          // Limpar duplicatas se existirem
+          limparDuplicatasGerenciador();
+        } catch (e) {
+          console.error('Erro ao carregar itens do gerenciador:', e);
+        }
+      }
+      
+      renderItensGerenciador();
+    }
+
+    function salvarItensGerenciador() {
+      localStorage.setItem('itensGerenciador', JSON.stringify(itensGerenciador));
+    }
+
+    // Função de limpeza para remover duplicatas (caso existam)
+    function limparDuplicatasGerenciador() {
+      const idsVistos = new Set();
+      const itensUnicos = [];
+      
+      itensGerenciador.forEach(item => {
+        if (!idsVistos.has(item.id)) {
+          idsVistos.add(item.id);
+          itensUnicos.push(item);
+        }
+      });
+      
+      if (itensUnicos.length !== itensGerenciador.length) {
+        itensGerenciador.length = 0;
+        itensGerenciador.push(...itensUnicos);
+        salvarItensGerenciador();
+        console.log('🧹 Duplicatas por ID removidas do gerenciador');
+        return true;
+      }
+      return false;
+    }
+
+    // Função avançada para remover duplicatas por conteúdo
+    function limparDuplicatasPorConteudo() {
+      const itensUnicos = [];
+      const removidos = [];
+      
+      itensGerenciador.forEach(item => {
+        const jaDuplicado = itensUnicos.some(unico => itemEhDuplicataPorConteudo(item, [unico]));
+        
+        if (!jaDuplicado) {
+          itensUnicos.push(item);
+        } else {
+          removidos.push(item);
+        }
+      });
+      
+      if (removidos.length > 0) {
+        itensGerenciador.length = 0;
+        itensGerenciador.push(...itensUnicos);
+        salvarItensGerenciador();
+        renderItensGerenciador();
+        console.log(`🧹 ${removidos.length} duplicatas por conteúdo removidas:`, removidos.map(item => item.nome));
+        return true;
+      } else {
+        console.log('✅ Nenhuma duplicata por conteúdo encontrada');
+        return false;
+      }
+    }
+
+    function renderItensGerenciador() {
+      const container = document.getElementById('listaItensGerenciador');
+      const nenhumItem = document.getElementById('nenhumItemGerenciador');
+      
+      // Aplicar filtros
+      const filtroTipo = document.getElementById('filtroTipoGerenciador')?.value || '';
+      const filtroRaridade = document.getElementById('filtroRaridade')?.value || '';
+      const busca = document.getElementById('buscaGerenciador')?.value.toLowerCase() || '';
+      
+      const itensFiltrados = itensGerenciador.filter(item => {
+        const matchTipo = !filtroTipo || item.tipo === filtroTipo;
+        const matchRaridade = !filtroRaridade || item.raridade === filtroRaridade;
+        const matchBusca = !busca || 
+          item.nome?.toLowerCase().includes(busca) || 
+          item.descricao?.toLowerCase().includes(busca) ||
+          item.propriedades?.toLowerCase().includes(busca);
+        return matchTipo && matchRaridade && matchBusca;
+      });
+      
+      container.innerHTML = '';
+      
+      if (itensFiltrados.length === 0) {
+        nenhumItem.classList.remove('hidden');
+        return;
+      }
+      
+      nenhumItem.classList.add('hidden');
+      
+      itensFiltrados.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = `item-card raridade-${item.raridade || 'comum'}`;
+        card.draggable = true;
+        card.dataset.itemId = item.id;
+        card.style.cssText = `
+          background: white;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 12px;
+          cursor: grab;
+          transition: all 0.2s ease;
+          position: relative;
+          border-left: 4px solid ${getRaridadeCor(item.raridade || 'comum')};
+        `;
+        
+        const isNoInventario = itemEstaNoInventario(item.id);
+        
+        card.innerHTML = `
+          <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">${item.nome || 'Item sem nome'}</div>
+          <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">${item.tipo ? item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1) : 'Sem tipo'}</div>
+          ${item.descricao ? `<div style="font-size: 12px; color: #4b5563; line-height: 1.3; margin-bottom: 8px;">${item.descricao}</div>` : ''}
+          ${item.peso ? `<div style="font-size: 10px; color: #6b7280; margin-bottom: 8px;">Peso: ${item.peso}kg</div>` : ''}
+          <div style="display: flex; gap: 4px; margin-top: 8px;">
+            <button onclick="editarItemGerenciador('${item.id}')" style="color: #2563eb; background: none; border: none; cursor: pointer; font-size: 12px;" title="Editar">✏️</button>
+            <button onclick="duplicarItemGerenciador('${item.id}')" style="color: #16a34a; background: none; border: none; cursor: pointer; font-size: 12px;" title="Duplicar">📋</button>
+            <button onclick="removerItemGerenciador('${item.id}')" style="color: #dc2626; background: none; border: none; cursor: pointer; font-size: 12px;" title="Remover">🗑️</button>
+            <div style="flex: 1;"></div>
+            ${!isNoInventario ? `<span style="color: #6b7280; font-size: 10px;">Arraste para o inventário</span>` : '<span style="color: #16a34a; font-size: 10px;">✓ No inventário</span>'}
+          </div>
+        `;
+        
+        // Adicionar eventos de drag
+        card.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', JSON.stringify({
+            source: 'gerenciador',
+            itemId: item.id,
+            itemData: item // Incluir todos os dados do item
+          }));
+          card.style.opacity = '0.5';
+          card.style.transform = 'rotate(5deg)';
+        });
+        
+        card.addEventListener('dragend', () => {
+          card.style.opacity = '1';
+          card.style.transform = 'none';
+        });
+        
+        // Hover effects
+        card.addEventListener('mouseenter', () => {
+          card.style.borderColor = '#3b82f6';
+          card.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+          card.style.transform = 'translateY(-1px)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          card.style.borderColor = '#e5e7eb';
+          card.style.boxShadow = 'none';
+          card.style.transform = 'none';
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    function criarNovoItemGerenciador() {
+      const novoItem = {
+        id: gerarGUIDUnicoGerenciador(),
+        nome: 'Novo Item',
+        descricao: '',
+        tipo: '',
+        raridade: 'comum',
+        tipoDano: '',
+        recuperaVida: '',
+        recupera: '',
+        consumivel: 'false',
+        propriedades: '',
+        peso: '',
+        equipadoEm: ''
+      };
+      
+      itemEditandoGerenciador = novoItem;
+      preencherFormularioItem(novoItem);
+      document.getElementById('tituloModalItem').textContent = '📦 Novo Item (Gerenciador)';
+      
+      // Posicionar o modal do item próximo ao modal do gerenciador
+      const itemWindow = document.getElementById('itemWindow');
+      itemWindow.style.top = '10%';
+      itemWindow.style.right = '10px';
+      itemWindow.style.left = 'auto';
+      
+      itemWindow.classList.remove('hidden');
+      
+      // Dar foco no campo nome e selecionar o texto para edição rápida
+      setTimeout(() => {
+        document.getElementById('itemNome').focus();
+        document.getElementById('itemNome').select();
+      }, 100);
+    }
+
+    function editarItemGerenciador(itemId) {
+      const item = itensGerenciador.find(i => i.id === itemId);
+      if (item) {
+        itemEditandoGerenciador = { ...item };
+        preencherFormularioItem(item);
+        document.getElementById('tituloModalItem').textContent = '📦 Editar Item (Gerenciador)';
+        
+        // Posicionar o modal do item próximo ao modal do gerenciador, mas sem sobrepor
+        const itemWindow = document.getElementById('itemWindow');
+        itemWindow.style.top = '10%';
+        itemWindow.style.right = '10px';
+        itemWindow.style.left = 'auto';
+        
+        itemWindow.classList.remove('hidden');
+        
+        // Dar foco no campo nome para melhor UX
+        setTimeout(() => {
+          document.getElementById('itemNome').focus();
+          document.getElementById('itemNome').select();
+        }, 100);
+      }
+    }
+
+    function duplicarItemGerenciador(itemId) {
+      const item = itensGerenciador.find(i => i.id === itemId);
+      if (item) {
+        const duplicado = {
+          ...item,
+          id: gerarGUIDUnicoGerenciador(),
+          nome: item.nome + ' (Cópia)'
+        };
+        itensGerenciador.push(duplicado);
+        salvarItensGerenciador();
+        renderItensGerenciador();
+      }
+    }
+
+    function removerItemGerenciador(itemId) {
+      if (confirm('Tem certeza que deseja remover este item do gerenciador?')) {
+        itensGerenciador = itensGerenciador.filter(i => i.id !== itemId);
+        
+        // Remover do inventário também se estiver lá (usando o sistema de rastreamento)
+        inventario = inventario.filter(i => 
+          i.sourceId !== itemId && 
+          i.gerenciadorId !== itemId && // Compatibilidade com dados antigos
+          i.id !== itemId
+        );
+        
+        salvarItensGerenciador();
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        renderItensGerenciador();
+        renderInventario();
+      }
+    }
+
+    function getRaridadeCor(raridade) {
+      const cores = {
+        'comum': '#6b7280',
+        'incomum': '#10b981',
+        'raro': '#3b82f6',
+        'epico': '#8b5cf6',
+        'lendario': '#f59e0b'
+      };
+      return cores[raridade] || cores['comum'];
+    }
+
+    function adicionarAoInventario(itemId) {
+      const item = itensGerenciador.find(i => i.id === itemId);
+      if (item && !inventario.some(invItem => invItem.id === itemId)) {
+        inventario.push({ ...item });
+        renderInventario();
+        renderItensGerenciador();
+      }
+    }
+
+    function importarListaItens() {
+      document.getElementById('importarItensInput').click();
+    }
+
+    function exportarListaItens() {
+      const blob = new Blob([JSON.stringify(itensGerenciador, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'lista_itens.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function preencherFormularioItem(item) {
+      document.getElementById('itemNome').value = item.nome || '';
+      document.getElementById('itemDescricao').value = item.descricao || '';
+      document.getElementById('itemTipoDano').value = item.tipoDano || '';
+      document.getElementById('itemRecuperaVida').value = item.recuperaVida || '';
+      document.getElementById('itemRecupera').value = item.recupera || '';
+      document.getElementById('itemConsumivel').value = item.consumivel || 'false';
+      document.getElementById('itemRaridade').value = item.raridade || 'comum';
+      document.getElementById('itemPropriedades').value = item.propriedades || '';
+      document.getElementById('itemPeso').value = item.peso || '';
+      document.getElementById('itemTipo').value = item.tipo || '';
+      document.getElementById('itemEquipadoEm').value = item.equipadoEm || '';
+    }
 
     function renderInventario() {
       renderInventarioTabela();
@@ -606,6 +1285,13 @@
 
       itensFiltrados.forEach((item, idx) => {
         const realIdx = inventario.indexOf(item);
+        
+        // Verificar se o item ainda existe no inventário principal
+        if (realIdx === -1) {
+          console.warn('Item filtrado não encontrado no inventário principal:', item);
+          return; // Pular este item
+        }
+        
         const tr = document.createElement('tr');
         tr.className = `inventory-row border-b ${item.equipadoEm ? 'equipped' : ''}`;
         tr.draggable = true;
@@ -638,8 +1324,20 @@
         
         // Adicionar eventos de drag
         tr.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', realIdx);
-          tr.style.opacity = '0.5';
+          // Verificar se realIdx é válido
+          if (realIdx >= 0 && realIdx < inventario.length) {
+            const dragData = {
+              source: 'inventario',
+              itemIndex: realIdx,
+              itemId: item.id,
+              itemData: item
+            };
+            e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+            tr.style.opacity = '0.5';
+          } else {
+            e.preventDefault();
+            console.error('Índice de item inválido para drag:', realIdx);
+          }
         });
         
         tr.addEventListener('dragend', () => {
@@ -813,7 +1511,19 @@
     }
 
     function equiparItem(itemIdx, slot) {
+      // Validação de entrada
+      if (typeof itemIdx !== 'number' || itemIdx < 0 || itemIdx >= inventario.length) {
+        console.error('Índice de item inválido para equipar:', itemIdx);
+        return;
+      }
+      
       const item = inventario[itemIdx];
+      if (!item) {
+        console.error('Item não encontrado no índice:', itemIdx);
+        return;
+      }
+      
+      console.log(`Equipando item "${item.nome}" no slot "${slot}"`);
       
       // Verificar se slot está ocupado (exceto anéis que podem ter 2)
       if (slot !== 'anel') {
@@ -828,7 +1538,7 @@
         // Para anéis, verificar se já há 2 equipados
         const aneisEquipados = inventario.filter(i => i.equipadoEm === 'anel').length;
         if (aneisEquipados >= 2) {
-          alert('Já existem 2 anéis equipados. Desequipe um primeiro.');
+          console.log('Já existem 2 anéis equipados. Desequipe um primeiro.');
           return;
         }
       }
@@ -841,7 +1551,21 @@
     }
 
     function desequiparItem(itemIdx) {
-      inventario[itemIdx].equipadoEm = '';
+      // Validação de entrada
+      if (typeof itemIdx !== 'number' || itemIdx < 0 || itemIdx >= inventario.length) {
+        console.error('Índice de item inválido para desequipar:', itemIdx);
+        return;
+      }
+      
+      const item = inventario[itemIdx];
+      if (!item) {
+        console.error('Item não encontrado no índice:', itemIdx);
+        return;
+      }
+      
+      console.log(`Desequipando item "${item.nome}"`);
+      
+      item.equipadoEm = '';
       renderInventario();
       
       // Fechar menu
@@ -850,8 +1574,11 @@
 
     function abrirModalItem() {
       itemEditandoIndex = -1;
-      document.getElementById('tituloModalItem').textContent = '📦 Novo Item';
-      limparFormularioItem();
+      // Não redefinir o título se já foi definido (para edição do gerenciador)
+      if (!document.getElementById('tituloModalItem').textContent.includes('Gerenciador')) {
+        document.getElementById('tituloModalItem').textContent = '📦 Novo Item';
+        limparFormularioItem();
+      }
       
       // Position the window and show it
       const itemWindow = document.getElementById('itemWindow');
@@ -893,6 +1620,7 @@
       document.getElementById('itemRecuperaVida').value = '';
       document.getElementById('itemRecupera').value = '';
       document.getElementById('itemConsumivel').value = 'false';
+      document.getElementById('itemRaridade').value = 'comum';
       document.getElementById('itemPropriedades').value = '';
       document.getElementById('itemPeso').value = '';
       document.getElementById('itemTipo').value = '';
@@ -901,12 +1629,14 @@
 
     function salvarItem() {
       const item = {
+        id: itemEditandoGerenciador ? itemEditandoGerenciador.id : gerarGUID(),
         nome: document.getElementById('itemNome').value,
         descricao: document.getElementById('itemDescricao').value,
         tipoDano: document.getElementById('itemTipoDano').value,
         recuperaVida: document.getElementById('itemRecuperaVida').value,
         recupera: document.getElementById('itemRecupera').value,
         consumivel: document.getElementById('itemConsumivel').value,
+        raridade: document.getElementById('itemRaridade').value,
         propriedades: document.getElementById('itemPropriedades').value,
         peso: document.getElementById('itemPeso').value,
         tipo: document.getElementById('itemTipo').value,
@@ -914,13 +1644,39 @@
       };
 
       if (itemEditandoIndex >= 0) {
+        // Editando item existente no inventário
         inventario[itemEditandoIndex] = item;
+        
+        // Se existe no gerenciador, atualizar lá também
+        const gerIndex = itensGerenciador.findIndex(i => i.id === item.id);
+        if (gerIndex !== -1) {
+          itensGerenciador[gerIndex] = item;
+          salvarItensGerenciador();
+        }
+        
+        renderInventario();
+      } else if (itemEditandoGerenciador) {
+        // Item vem do gerenciador - salvar apenas no gerenciador
+        const existeIndex = itensGerenciador.findIndex(i => i.id === item.id);
+        if (existeIndex !== -1) {
+          itensGerenciador[existeIndex] = item;
+        } else {
+          itensGerenciador.push(item);
+        }
+        salvarItensGerenciador();
       } else {
+        // Item novo do inventário (caso ainda seja usado)
         inventario.push(item);
+        renderInventario();
       }
 
-      renderInventario();
+      renderItensGerenciador();
       document.getElementById('itemWindow').classList.add('hidden');
+      itemEditandoGerenciador = null;
+      
+      // Feedback visual de sucesso no console
+      const nomeItem = item.nome || 'Item';
+      console.log(`✅ ${nomeItem} salvo com sucesso!`);
     }
 
     function removerItem(idx) {
@@ -930,31 +1686,7 @@
       }
     }
 
-    // Event Listeners para o inventário
-    document.getElementById('inventarioBtn').onclick = function() {
-      document.getElementById('modalInventario').classList.remove('hidden');
-      renderInventario();
-    };
-
-    document.getElementById('fecharModalInventario').onclick = function() {
-      document.getElementById('modalInventario').classList.add('hidden');
-    };
-
-    document.getElementById('adicionarItem').onclick = abrirModalItem;
-
-    document.getElementById('fecharModalItem').onclick = function() {
-      document.getElementById('itemWindow').classList.add('hidden');
-    };
-
-    document.getElementById('salvarItem').onclick = salvarItem;
-
-    document.getElementById('cancelarItem').onclick = function() {
-      document.getElementById('itemWindow').classList.add('hidden');
-    };
-
-    // Event listeners para filtros do inventário
-    document.getElementById('filtroTipo').addEventListener('change', renderInventarioTabela);
-    document.getElementById('buscaItem').addEventListener('input', renderInventarioTabela);
+    // (Event listeners movidos para o bloco DOMContentLoaded unificado)
 
     // Event listeners para drag & drop nos slots
     document.querySelectorAll('.equipment-slot').forEach(slot => {
@@ -971,18 +1703,52 @@
         e.preventDefault();
         slot.classList.remove('drag-over');
         
-        const itemIdx = parseInt(e.dataTransfer.getData('text/plain'));
-        const item = inventario[itemIdx];
-        const slotType = slot.dataset.slot;
-        
-        // Verificar se o item é compatível com o slot
-        const slotsCompativeis = getSlotsCompativeis(item);
-        const isCompatible = slotsCompativeis.some(s => s.value === slotType);
-        
-        if (isCompatible) {
-          equiparItem(itemIdx, slotType);
-        } else {
-          alert('Este item não é compatível com este slot.');
+        try {
+          const dragDataStr = e.dataTransfer.getData('text/plain');
+          
+          // Tentar parsing como JSON primeiro (novo formato)
+          let dragData;
+          try {
+            dragData = JSON.parse(dragDataStr);
+          } catch {
+            // Fallback para formato antigo (apenas índice)
+            const itemIdx = parseInt(dragDataStr);
+            if (isNaN(itemIdx) || itemIdx < 0 || itemIdx >= inventario.length) {
+              console.error('Índice de item inválido:', dragDataStr);
+              return;
+            }
+            dragData = {
+              source: 'inventario',
+              itemIndex: itemIdx,
+              itemData: inventario[itemIdx]
+            };
+          }
+          
+          if (dragData.source === 'inventario') {
+            const itemIdx = dragData.itemIndex;
+            const item = dragData.itemData || inventario[itemIdx];
+            const slotType = slot.dataset.slot;
+            
+            // Verificar se o índice é válido
+            if (itemIdx < 0 || itemIdx >= inventario.length) {
+              console.error('Índice de item inválido:', itemIdx);
+              return;
+            }
+            
+            // Verificar se o item é compatível com o slot
+            const slotsCompativeis = getSlotsCompativeis(item);
+            const isCompatible = slotsCompativeis.some(s => s.value === slotType);
+            
+            if (isCompatible) {
+              equiparItem(itemIdx, slotType);
+            } else {
+              console.log(`Item "${item.nome}" não é compatível com slot "${slotType}"`);
+            }
+          } else {
+            console.log('Tentativa de equipar item que não vem do inventário');
+          }
+        } catch (error) {
+          console.error('Erro ao processar drop no slot de equipamento:', error);
         }
       });
 
@@ -1181,9 +1947,413 @@
       marcos[idx][campo] = valor;
     }
 
+    // Unificação de todos os event listeners de inicialização
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('btnAddMarco').addEventListener('click', adicionarMarco);
-      renderMarcos();
+      console.log('DOMContentLoaded executado!');
+      
+      // Marcos
+      if (document.getElementById('btnAddMarco')) {
+        document.getElementById('btnAddMarco').addEventListener('click', adicionarMarco);
+        renderMarcos();
+      }
+
+      // Imagem do personagem
+      if (document.getElementById('imagemPersonagem')) {
+        document.getElementById('imagemPersonagem').addEventListener('change', handleImageUpload);
+      }
+
+      // Habilidades
+      if (document.getElementById('btnAddHabilidade')) {
+        document.getElementById('btnAddHabilidade').onclick = function() {
+          habilidades.push({ nome: '', descricao: '', jogabilidade: '' });
+          renderHabilidades();
+        };
+      }
+
+      // Carrega dados iniciais
+      carregarDados();
+      carregarItensGerenciador();
+
+      // Disponibilizar funções de debug e manutenção globalmente (remover em produção se desejar)
+      window.debugSincronizacao = debugSincronizacao;
+      window.debugEquipamentos = debugEquipamentos;
+      window.limparDuplicatasGerenciador = limparDuplicatasGerenciador;
+      window.limparDuplicatasPorConteudo = limparDuplicatasPorConteudo;
+
+      // Event Listeners para o inventário
+      if (document.getElementById('inventarioBtn')) {
+        document.getElementById('inventarioBtn').onclick = function() {
+          document.getElementById('modalInventario').classList.remove('hidden');
+          renderInventario();
+        };
+      }
+      if (document.getElementById('fecharModalInventario')) {
+        document.getElementById('fecharModalInventario').onclick = function() {
+          document.getElementById('modalInventario').classList.add('hidden');
+        };
+      }
+      if (document.getElementById('fecharModalItem')) {
+        document.getElementById('fecharModalItem').onclick = function() {
+          document.getElementById('itemWindow').classList.add('hidden');
+        };
+      }
+      if (document.getElementById('salvarItem')) {
+        document.getElementById('salvarItem').onclick = salvarItem;
+      }
+      if (document.getElementById('cancelarItem')) {
+        document.getElementById('cancelarItem').onclick = function() {
+          document.getElementById('itemWindow').classList.add('hidden');
+        };
+      }
+      if (document.getElementById('filtroTipo')) {
+        document.getElementById('filtroTipo').addEventListener('change', renderInventarioTabela);
+      }
+      if (document.getElementById('buscaItem')) {
+        document.getElementById('buscaItem').addEventListener('input', renderInventarioTabela);
+      }
+
+      // Gerenciador de Conteúdo
+      if (document.getElementById('gerenciadorBtn')) {
+        console.log('Registrando event listener para gerenciadorBtn');
+        document.getElementById('gerenciadorBtn').onclick = function() {
+          // CRIAR MODAL DO ZERO - SOLUÇÃO QUE FUNCIONA
+          const modalExistente = document.getElementById('modalGerenciador');
+          if (modalExistente) modalExistente.remove();
+          
+          // Criar modal completo
+          const modal = document.createElement('div');
+          modal.id = 'modalGerenciador';
+          modal.innerHTML = `
+            <div id="cabecalhoGerenciador" style="background: #f3f4f6; padding: 16px; border-bottom: 1px solid #d1d5db; display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none;">
+              <h2 style="font-size: 18px; font-weight: bold; margin: 0;">🗃️ Gerenciador de Conteúdo</h2>
+              <button onclick="this.closest('#modalGerenciador').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 20px; height: 520px; overflow-y: auto;">
+              <!-- Abas -->
+              <div style="display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 16px;">
+                <button style="padding: 8px 16px; border-bottom: 2px solid #f97316; color: #f97316; font-weight: bold; background: none; border: none; cursor: pointer;">📦 Itens</button>
+                <button style="padding: 8px 16px; color: #6b7280; background: none; border: none; cursor: not-allowed;" disabled>🏛️ Locais (Em breve)</button>
+                <button style="padding: 8px 16px; color: #6b7280; background: none; border: none; cursor: not-allowed;" disabled>👥 NPCs (Em breve)</button>
+              </div>
+              
+              <!-- Barra de ferramentas -->
+              <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <button onclick="criarNovoItemGerenciador()" style="background: #16a34a; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">➕ Criar Item</button>
+                <button onclick="importarListaItens()" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">📥 Importar Lista</button>
+                <button onclick="exportarListaItens()" style="background: #7c3aed; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">📤 Exportar Lista</button>
+                <div style="flex: 1;"></div>
+                <input type="text" id="buscarItensGerenciador" placeholder="Buscar itens..." style="border: 1px solid #d1d5db; border-radius: 4px; padding: 6px 12px; width: 250px;">
+              </div>
+              
+              <!-- Filtros -->
+              <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <select id="filtroTipoGerenciador" style="border: 1px solid #d1d5db; border-radius: 4px; padding: 6px 12px;">
+                  <option value="">Todos os tipos</option>
+                  <option value="arma">Armas</option>
+                  <option value="capacete">Capacetes</option>
+                  <option value="armadura">Armaduras</option>
+                  <option value="luvas">Luvas</option>
+                  <option value="botas">Botas</option>
+                  <option value="anel">Anéis</option>
+                  <option value="colar">Colares/Amuletos</option>
+                  <option value="consumivel">Consumíveis</option>
+                  <option value="ferramenta">Ferramentas</option>
+                  <option value="outro">Outros</option>
+                </select>
+                <select id="filtroRaridadeGerenciador" style="border: 1px solid #d1d5db; border-radius: 4px; padding: 6px 12px;">
+                  <option value="">Todas as raridades</option>
+                  <option value="comum">Comum</option>
+                  <option value="incomum">Incomum</option>
+                  <option value="raro">Raro</option>
+                  <option value="epico">Épico</option>
+                  <option value="lendario">Lendário</option>
+                </select>
+              </div>
+              
+              <!-- Lista de Itens -->
+              <div style="border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; padding: 16px; height: 350px; overflow-y: auto;">
+                <div id="listaItensGerenciador" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;">
+                  <!-- Itens serão renderizados aqui -->
+                </div>
+                <div id="nenhumItemGerenciador" style="text-align: center; color: #6b7280; padding: 32px 0; display: none;">
+                  Nenhum item encontrado. Crie ou importe itens para começar.
+                </div>
+              </div>
+            </div>
+          `;
+          
+          modal.style.cssText = `
+            position: fixed;
+            top: 50px;
+            left: 50px;
+            width: 900px;
+            height: 700px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            z-index: 9999;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          `;
+          
+          document.body.appendChild(modal);
+          
+          // Tornar o modal arrastável
+          tornarArrastavel('modalGerenciador', 'cabecalhoGerenciador');
+          
+          // Renderizar itens após criar o modal
+          renderItensGerenciador();
+          
+          // Adicionar event listeners para filtros
+          document.getElementById('buscarItensGerenciador').addEventListener('input', renderItensGerenciador);
+          document.getElementById('filtroTipoGerenciador').addEventListener('change', renderItensGerenciador);
+          document.getElementById('filtroRaridadeGerenciador').addEventListener('change', renderItensGerenciador);
+        };
+      } else {
+        console.log('ERRO: gerenciadorBtn não encontrado!');
+      }
+      if (document.getElementById('adicionarItem')) {
+        document.getElementById('adicionarItem').onclick = function() {
+          const modal = document.getElementById('modalGerenciador');
+          modal.classList.remove('hidden');
+          renderItensGerenciador();
+        };
+      }
+      if (document.getElementById('criarItemGerenciador'))
+        document.getElementById('criarItemGerenciador').onclick = criarNovoItemGerenciador;
+      if (document.getElementById('importarItensBtn'))
+        document.getElementById('importarItensBtn').onclick = importarListaItens;
+      if (document.getElementById('exportarItensBtn'))
+        document.getElementById('exportarItensBtn').onclick = exportarListaItens;
+      if (document.getElementById('importarItensInput'))
+        document.getElementById('importarItensInput').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file && file.type === 'application/json') {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              try {
+                const importados = JSON.parse(event.target.result);
+                if (Array.isArray(importados)) {
+                  // Filtrar itens que já existem no gerenciador
+                  const itensNovos = [];
+                  const itensIgnorados = [];
+                  
+                  importados.forEach(item => {
+                    // Verificar se já existe um item com o mesmo ID
+                    const jaExiste = itensGerenciador.some(existente => existente.id === item.id);
+                    
+                    if (jaExiste) {
+                      itensIgnorados.push(item);
+                    } else {
+                      // Garantir que o item tenha um ID válido
+                      if (!item.id) {
+                        item.id = gerarGUIDUnicoGerenciador();
+                      }
+                      // Verificar novamente se o ID gerado não conflita (dupla segurança)
+                      if (!itensGerenciador.some(existente => existente.id === item.id)) {
+                        itensNovos.push(item);
+                      }
+                    }
+                  });
+                  
+                  // Adicionar apenas os itens novos
+                  if (itensNovos.length > 0) {
+                    itensGerenciador.push(...itensNovos);
+                    salvarItensGerenciador();
+                    renderItensGerenciador();
+                  }
+                  
+                  // Log detalhado do resultado
+                  console.log(`📥 Importação concluída:`);
+                  console.log(`  ✅ ${itensNovos.length} itens novos adicionados`);
+                  console.log(`  ⚠️ ${itensIgnorados.length} itens ignorados (já existem)`);
+                  console.log(`  📦 Total no gerenciador: ${itensGerenciador.length} itens`);
+                  
+                  if (itensIgnorados.length > 0) {
+                    console.log(`\n🔍 Itens ignorados:`, itensIgnorados.map(item => `${item.nome} (${item.id})`));
+                  }
+                } else {
+                  console.error('Formato de arquivo inválido. Esperado uma lista de itens.');
+                }
+              } catch (error) {
+                console.error('Erro ao importar arquivo: ' + error.message);
+              }
+            };
+            reader.readAsText(file);
+          } else {
+            console.error('Por favor, selecione um arquivo JSON válido.');
+          }
+          e.target.value = '';
+        });
+      if (document.getElementById('buscarItensGerenciador'))
+        document.getElementById('buscarItensGerenciador').addEventListener('input', renderItensGerenciador);
+      if (document.getElementById('filtroTipoGerenciador'))
+        document.getElementById('filtroTipoGerenciador').addEventListener('change', renderItensGerenciador);
+      if (document.getElementById('filtroRaridadeGerenciador'))
+        document.getElementById('filtroRaridadeGerenciador').addEventListener('change', renderItensGerenciador);
+      if (document.getElementById('modalGerenciador') && document.getElementById('cabecalhoGerenciador'))
+        tornarArrastavel('modalGerenciador', 'cabecalhoGerenciador');
+
+      // Modal de rolagem de dados
+      if (document.getElementById('rolarDadosBtn')) {
+        const modal = document.getElementById('modalRolarDados');
+        document.getElementById('rolarDadosBtn').onclick = () => {
+          preencherSelectPericia();
+          document.getElementById('divHabilidadeInterna').style.display = 'none';
+          document.getElementById('resultadoRolagem').textContent = '';
+          modal.classList.remove('hidden');
+        };
+      }
+      if (document.getElementById('fecharModalRolar')) {
+        document.getElementById('fecharModalRolar').onclick = () => {
+          document.getElementById('modalRolarDados').classList.add('hidden');
+        };
+      }
+      if (document.getElementById('selectPericia')) {
+        document.getElementById('selectPericia').onchange = function() {
+          document.getElementById('divHabilidadeInterna').style.display = 'none';
+        };
+      }
+      if (document.getElementById('btnRolar')) {
+        document.getElementById('btnRolar').onclick = function() {
+          const val = document.getElementById('selectPericia').value;
+          if (!val) {
+            document.getElementById('resultadoRolagem').textContent = 'Selecione uma perícia.';
+            return;
+          }
+          const [catNome, habNome] = val.split('||');
+          let dados = [], resultado, dadosBase = 1, modo = '';
+          const pesoMarcos = calcularPesoMarcos(catNome, habNome);
+          // Buscar treinamento dessa perícia
+          if (nivelPericiaAtual(habNome) >= 1) {
+            dadosBase = 2;
+            modo = 'melhor';
+          }
+          let totalDados = dadosBase + pesoMarcos;
+          if (totalDados < 1) totalDados = 1;
+          for (let i = 0; i < totalDados; i++) dados.push(rolarD10());
+          if (modo === 'melhor') resultado = Math.max(...dados);
+          else if (modo === 'pior') resultado = Math.min(...dados);
+          else resultado = dados[0];
+          let explicacaoBonus = '';
+          if (pesoMarcos !== 0) explicacaoBonus += `<br><span class='text-xs text-blue-700'>Modificador de marcos: ${pesoMarcos > 0 ? '+' : ''}${pesoMarcos} dado(s)</span>`;
+          const explicacao = `Perícia: ${totalDados}d10${modo ? ' ('+modo+')' : ''}${explicacaoBonus}`;
+          document.getElementById('resultadoRolagem').innerHTML =
+            `<div class='mb-2'>${catNome} - <b>${habNome}</b></div>`+
+            `<div class='mb-2'>${explicacao}</div>`+
+            `<div class='mb-2'>Rolagem: <span class='font-mono text-xl'>${dados.join(' , ')}</span></div>`+
+            `<div class='mb-2'>Resultado escolhido: <span class='font-bold text-2xl text-blue-700'>${resultado}</span></div>`;
+        };
+      }
+
+      // === EVENT LISTENERS PARA DRAG AND DROP ===
+      // Configurar drop zone para o inventário
+      setTimeout(() => {
+        const inventarioTabela = document.getElementById('inventarioTabela');
+        const modalInventario = document.getElementById('modalInventario');
+        
+        if (inventarioTabela && modalInventario) {
+          // Adicionar classe visual para identificar como drop zone
+          modalInventario.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            
+            // Verificar se estamos sobre um slot de equipamento
+            const elementoAtivo = document.elementFromPoint(e.clientX, e.clientY);
+            if (elementoAtivo && elementoAtivo.closest('.equipment-slot')) {
+              return; // Não aplicar estilo se estiver sobre slot de equipamento
+            }
+            
+            e.dataTransfer.dropEffect = 'copy';
+            modalInventario.style.backgroundColor = '#f0f9ff';
+            modalInventario.style.borderColor = '#0ea5e9';
+          });
+
+          modalInventario.addEventListener('dragleave', function(e) {
+            // Só remove o destaque se saiu completamente do modal E não está sobre um slot
+            const elementoDestino = e.relatedTarget;
+            if (!modalInventario.contains(elementoDestino) || 
+                (elementoDestino && elementoDestino.closest('.equipment-slot'))) {
+              modalInventario.style.backgroundColor = '';
+              modalInventario.style.borderColor = '#e5e7eb';
+            }
+          });
+
+          modalInventario.addEventListener('drop', function(e) {
+            e.preventDefault();
+            modalInventario.style.backgroundColor = '';
+            modalInventario.style.borderColor = '#e5e7eb';
+            
+            // Verificar se o drop foi em um slot de equipamento
+            const elementoAtivo = document.elementFromPoint(e.clientX, e.clientY);
+            if (elementoAtivo && elementoAtivo.closest('.equipment-slot')) {
+              console.log('🎯 Drop redirecionado para slot de equipamento');
+              return; // Deixar o slot de equipamento lidar com isso
+            }
+            
+            try {
+              const dragData = JSON.parse(e.dataTransfer.getData('text/plain'));
+              console.log('Item arrastado para o inventário:', dragData);
+              
+              if (dragData.source === 'gerenciador' && dragData.itemData) {
+                const itemData = dragData.itemData;
+                
+                // Verificar se o item já está no inventário usando o sistema de rastreamento
+                const jaExiste = itemEstaNoInventario(itemData.id);
+                
+                if (jaExiste) {
+                  console.log(`ℹ️ Item "${itemData.nome}" já está no inventário!`);
+                  return;
+                }
+                
+                // Adicionar ao inventário mantendo referência ao gerenciador
+                const novoItem = {
+                  id: gerarGUID(), // Novo ID único para o inventário
+                  sourceId: itemData.id, // ID do item original no gerenciador (mais claro que gerenciadorId)
+                  nome: itemData.nome || 'Item sem nome',
+                  tipo: itemData.tipo || 'outro',
+                  peso: parseFloat(itemData.peso) || 0,
+                  raridade: itemData.raridade || 'comum',
+                  descricao: itemData.descricao || '',
+                  propriedades: itemData.propriedades || '',
+                  tipoDano: itemData.tipoDano || '',
+                  recuperaVida: itemData.recuperaVida || '',
+                  recupera: itemData.recupera || '',
+                  consumivel: itemData.consumivel || 'false',
+                  equipadoEm: itemData.equipadoEm || '',
+                  equipado: false,
+                  // Metadados para rastreamento
+                  criadoEm: new Date().toISOString(),
+                  origem: 'gerenciador'
+                };
+                
+                // Adicionar ao array do inventário
+                inventario.push(novoItem);
+                
+                // Salvar no localStorage
+                localStorage.setItem('inventario', JSON.stringify(inventario));
+                
+                // Atualizar a exibição do inventário
+                renderInventarioTabela();
+                
+                // Atualizar a exibição do gerenciador para mostrar que o item está no inventário
+                renderItensGerenciador();
+                
+                // Feedback visual no console
+                console.log(`✅ Item "${itemData.nome}" adicionado ao inventário!`);
+              } else if (dragData.source === 'inventario') {
+                // Ignorar drags internos do inventário - estes devem ser tratados pelos slots de equipamento
+                console.log('🔄 Drag interno do inventário ignorado (deve ser tratado por slots de equipamento)');
+                return;
+              } else {
+                console.error('Dados de drag inválidos:', dragData);
+              }
+              
+            } catch (error) {
+              console.error('Erro ao processar item arrastado:', error);
+            }
+          });
+        }
+      }, 100);
+
     });
     // --- IMAGEM DO PERSONAGEM ---
     function compressImage(file, maxWidth, quality, callback) {
@@ -1233,9 +2403,8 @@
       document.getElementById('imagemPersonagem').value = '';
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('imagemPersonagem').addEventListener('change', handleImageUpload);
-      
+    // Função para carregar dados da ficha do localStorage
+    function carregarDados() {
       // Carrega a ficha salva no localStorage, se existir
       const fichaSalva = localStorage.getItem('fichaRPG');
       if (fichaSalva) {
@@ -1247,9 +2416,27 @@
         }
       }
       
+      // Carrega o inventário salvo no localStorage
+      const inventarioSalvo = localStorage.getItem('inventario');
+      if (inventarioSalvo) {
+        try {
+          const inventarioCarregado = JSON.parse(inventarioSalvo);
+          inventario.length = 0; // Limpar array
+          inventario.push(...inventarioCarregado); // Adicionar itens carregados
+          console.log('📦 Inventário carregado:', inventario.length, 'itens');
+          
+          // Executar migração automática dos dados
+          migrarDadosInventario();
+        } catch (e) {
+          console.error('Erro ao carregar inventário salvo:', e);
+        }
+      }
+      
       // Certifica-se de que as perícias são renderizadas corretamente
       renderPericias();
-    });
+    }
+
+  // (Removido: agora está tudo unificado no bloco acima)
     const pericias = [
       { icon: '💪', nome: 'Corpo', habilidades: ['Atletismo', 'Briga', 'Agilidade', 'Resistência'] },
       { icon: '🧠', nome: 'Mente', habilidades: ['Investigação', 'Conhecimento Geral', 'Conhecimento Específico', 'Intuição'] },
