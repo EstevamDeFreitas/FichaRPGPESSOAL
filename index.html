@@ -1428,9 +1428,10 @@
       
       const item = inventario[itemIdx];
       const menu = document.createElement('div');
-      menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+      menu.className = 'fixed bg-white border rounded shadow-lg p-2';
       menu.style.left = event.pageX + 'px';
       menu.style.top = event.pageY + 'px';
+      menu.style.zIndex = '10000'; // Z-index alto para aparecer acima dos modais
       
       const slotsCompativeis = getSlotsCompativeis(item);
       
@@ -1459,9 +1460,10 @@
       event.stopPropagation();
       
       const menu = document.createElement('div');
-      menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+      menu.className = 'fixed bg-white border rounded shadow-lg p-2';
       menu.style.left = event.pageX + 'px';
       menu.style.top = event.pageY + 'px';
+      menu.style.zIndex = '10000'; // Z-index alto para aparecer acima dos modais
       
       menu.innerHTML = `
         <button onclick="desequiparItem(${itemIdx})" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">📤 Desequipar</button>
@@ -1546,6 +1548,10 @@
       }
       
       item.equipadoEm = slot;
+      
+      // Salvar no localStorage
+      localStorage.setItem('inventario', JSON.stringify(inventario));
+      
       renderInventario();
       
       // Fechar menu
@@ -1568,6 +1574,10 @@
       console.log(`Desequipando item "${item.nome}"`);
       
       item.equipadoEm = '';
+      
+      // Salvar no localStorage
+      localStorage.setItem('inventario', JSON.stringify(inventario));
+      
       renderInventario();
       
       // Fechar menu
@@ -1773,10 +1783,11 @@
         } else {
           // Mostrar menu de seleção
           const menu = document.createElement('div');
-          menu.className = 'fixed bg-white border rounded shadow-lg p-2 z-50';
+          menu.className = 'fixed bg-white border rounded shadow-lg p-2';
           const rect = slot.getBoundingClientRect();
           menu.style.left = rect.right + 10 + 'px';
           menu.style.top = rect.top + 'px';
+          menu.style.zIndex = '10000'; // Z-index alto para aparecer acima dos modais
           
           menu.innerHTML = itensCompativeis.map(({ item, idx }) => 
             `<button onclick="equiparItem(${idx}, '${slotType}')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">${item.nome}</button>`
@@ -1981,6 +1992,14 @@
       window.debugEquipamentos = debugEquipamentos;
       window.limparDuplicatasGerenciador = limparDuplicatasGerenciador;
       window.limparDuplicatasPorConteudo = limparDuplicatasPorConteudo;
+      
+      // Disponibilizar funções de inventário globalmente para os botões onclick
+      window.mostrarMenuEquipar = mostrarMenuEquipar;
+      window.equiparItem = equiparItem;
+      window.desequiparItem = desequiparItem;
+      window.editarItem = editarItem;
+      window.removerItem = removerItem;
+      window.removerImagem = removerImagem;
 
       // Event Listeners para o inventário
       if (document.getElementById('inventarioBtn')) {
