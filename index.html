@@ -1031,11 +1031,13 @@
     function renderItensGerenciador() {
       const container = document.getElementById('listaItensGerenciador');
       const nenhumItem = document.getElementById('nenhumItemGerenciador');
+  // Se o modal ainda não existe no DOM, não há nada para renderizar agora
+  if (!container || !nenhumItem) return;
       
       // Aplicar filtros
       const filtroTipo = document.getElementById('filtroTipoGerenciador')?.value || '';
-      const filtroRaridade = document.getElementById('filtroRaridade')?.value || '';
-      const busca = document.getElementById('buscaGerenciador')?.value.toLowerCase() || '';
+  const filtroRaridade = document.getElementById('filtroRaridadeGerenciador')?.value || '';
+  const busca = document.getElementById('buscarItensGerenciador')?.value.toLowerCase() || '';
       
       const itensFiltrados = itensGerenciador.filter(item => {
         const matchTipo = !filtroTipo || item.tipo === filtroTipo;
@@ -2775,8 +2777,10 @@
         pericias: {},
         periciasEspecificas: {},
         marcos: marcos.slice(),
-        habilidades: habilidades.slice(),
-        inventario: inventario.slice()
+  habilidades: habilidades.slice(),
+  inventario: inventario.slice(),
+  // Inclui também a lista do gerenciador para restaurar junto na importação
+  itensGerenciador: itensGerenciador.slice()
       };
 
       document.querySelectorAll('input[data-pericia]').forEach(cb => {
@@ -2804,6 +2808,57 @@
   habilidades = Array.isArray(ficha.habilidades) ? ficha.habilidades.slice() : [];
   renderHabilidades();
   inventario = Array.isArray(ficha.inventario) ? ficha.inventario.slice() : [];
+  // Persistir e re-renderizar o inventário imediatamente após importação
+  try {
+    localStorage.setItem('inventario', JSON.stringify(inventario));
+  } catch {}
+  try {
+    migrarDadosInventario();
+  } catch {}
+  try {
+    renderInventario();
+  } catch {}
+  // Restaurar e persistir itens do gerenciador, se vierem no arquivo
+  if (Array.isArray(ficha.itensGerenciador)) {
+    itensGerenciador = ficha.itensGerenciador.slice();
+    try { salvarItensGerenciador(); } catch {}
+  } else if (!Array.isArray(ficha.itensGerenciador) || (Array.isArray(ficha.itensGerenciador) && ficha.itensGerenciador.length === 0)) {
+    // Se o arquivo não trouxe a lista do gerenciador, derivar a partir do inventário
+    if (Array.isArray(inventario) && inventario.length > 0) {
+      const mapaGer = new Map();
+      inventario.forEach((item, idx) => {
+        // Usar sourceId/gerenciadorId quando houver; caso contrário, gerar e atribuir
+        let sid = item.sourceId || item.gerenciadorId;
+        if (!sid) {
+          sid = gerarGUID();
+          inventario[idx] = { ...item, sourceId: sid };
+        }
+        if (!mapaGer.has(sid)) {
+          mapaGer.set(sid, {
+            id: sid,
+            nome: item.nome || 'Item',
+            descricao: item.descricao || '',
+            tipo: item.tipo || '',
+            raridade: item.raridade || 'comum',
+            tipoDano: item.tipoDano || '',
+            recuperaVida: item.recuperaVida || '',
+            recupera: item.recupera || '',
+            consumivel: item.consumivel || 'false',
+            propriedades: item.propriedades || '',
+            peso: item.peso || '',
+            equipadoEm: ''
+          });
+        }
+      });
+      itensGerenciador = Array.from(mapaGer.values());
+      try { salvarItensGerenciador(); } catch {}
+      try { localStorage.setItem('inventario', JSON.stringify(inventario)); } catch {}
+    }
+  }
+  // Atualizar estado visual do gerenciador (se existir no DOM)
+  try {
+    renderItensGerenciador();
+  } catch {}
       // Imagem do personagem
       if (ficha.imagemPersonagem) {
         document.getElementById('previewImagem').src = ficha.imagemPersonagem;
